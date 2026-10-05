@@ -14,13 +14,14 @@ first installation and call on another user’s Mac still need validation.
 ## Features
 
 - Live camera preview and OBS Virtual Camera for Meet / Telegram.
-- Two-way Wi-Fi or Bluetooth audio with speaker and microphone level controls.
+- Two-way Wi-Fi or Bluetooth audio; device choices apply immediately.
+- Speaker and microphone gain controls in Settings, protected by the owner's superadmin code.
 - Wi-Fi echo cancellation; residual echo can still occur.
 - Eye open/close buttons and a camera-tilt slider for the calibrated snail.
 - Saved connections, Wi-Fi network management and device history.
 - A 3-minute Bluetooth pairing window after an explicit full disconnect (requires the updated Pi service).
 - Waiting-sound volume and mute controls.
-- English, Ukrainian and Czech interface languages.
+- English by default, with Ukrainian and Czech interface languages; Wi-Fi audio is the initial choice.
 - GitHub update checks and an explicit **Update and restart** button.
 
 ## Mac requirements
@@ -42,7 +43,10 @@ Build for your Mac using the [step-by-step guide](docs/INSTALL.md).
 Open the project in a local Codex or Claude Code session and ask it to install
 only the Mac app using [AGENTS.md](AGENTS.md) and [the installation guide](docs/INSTALL.md).
 [CLAUDE.md](CLAUDE.md) points Claude to the same instructions. The agent can check
-dependencies and build; you complete macOS prompts and enter the snail’s code.
+dependencies, build, and install a normal **DenDenMushi.app in Applications**.
+You complete macOS prompts and enter the snail’s code. The agent should finish
+the separate audio installer too. Launch the installed app with a click; you
+do not need Terminal or the repository open for everyday use.
 
 ## Build from source
 
@@ -66,8 +70,8 @@ The build does not install audio drivers or modify the snail. Wi-Fi audio
 installation is a separate Settings action that briefly restarts Mac audio;
 do it outside a call. Keep only one copy of DenDenMushi running.
 
-If the app initially opens in Ukrainian, go to **Налаштування → Мова програми**
-and select **English**. See the guide for connection and call-device selection.
+Fresh installs use English and Wi-Fi audio. Existing language and transport
+preferences are preserved. See the guide for connection and call-device selection.
 
 ## Updates
 

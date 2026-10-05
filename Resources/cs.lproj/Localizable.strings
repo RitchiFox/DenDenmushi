@@ -1,14 +1,14 @@
-"Твій равлик" = "Tvůj šnek";
+"Твій равлик" = "Tvůj Šlimak";
 " збережений на цьому Mac" = " uložený na tomto Macu";
 "На головному екрані достатньо натиснути «Підключити». Пошук, код і адресу програма підставить сама." = "Na hlavní obrazovce stačí kliknout na „Připojit“. Aplikace sama vyhledá zařízení a doplní kód i adresu.";
 "Код для іншого Mac" = "Kód pro jiný Mac";
-"Змінити Wi-Fi равлика" = "Změnit Wi-Fi šneka";
+"Змінити Wi-Fi равлика" = "Změnit Wi-Fi Šlimaka";
 "Скинути підключення цього Mac" = "Resetovat připojení tohoto Macu";
-"На головному екрані натисни «Підключити». Програма знайде готового равлика й попросить його код лише один раз." = "Na hlavní obrazovce klikni na „Připojit“. Aplikace najde připraveného šneka a pouze jednou požádá o jeho kód.";
-"Підключити іншого равлика" = "Připojit jiného šneka";
-"Змінити пароль равлика" = "Změnit heslo šneka";
+"На головному екрані натисни «Підключити». Програма знайде готового равлика й попросить його код лише один раз." = "Na hlavní obrazovce klikni na „Připojit“. Aplikace najde připraveného Šlimaka a pouze jednou požádá o jeho kód.";
+"Підключити іншого равлика" = "Připojit jiného Šlimaka";
+"Змінити пароль равлика" = "Změnit heslo Šlimaka";
 "Підготовка нового Pi / оновлення сервісу" = "Připravit nové Pi / aktualizovat službu";
-"Це потрібно власнику під час збирання. Для готового равлика достатньо кнопки «Підключити» та його коду." = "Tento krok provádí vlastník při sestavování. U připraveného šneka stačí „Připojit“ a jeho kód.";
+"Це потрібно власнику під час збирання. Для готового равлика достатньо кнопки «Підключити» та його коду." = "Tento krok provádí vlastník při sestavování. U připraveného Šlimaka stačí „Připojit“ a jeho kód.";
 "Адреса Pi" = "Adresa Pi";
 "Користувач Pi" = "Uživatel Pi";
 "Пароль цього користувача Pi" = "Heslo tohoto uživatele Pi";
@@ -19,32 +19,32 @@
 "Програма зупинить камеру, видалить доступ цього Mac на Pi та забуде збережене підключення." = "Aplikace zastaví kameru, odebere přístup tohoto Macu na Pi a zapomene uložené připojení.";
 "Для видалення ключа потрібен пароль користувача Pi. Пароль не зберігається." = "K odebrání klíče je potřeba heslo uživatele Pi. Heslo se neuloží.";
 "Пароль користувача Pi" = "Heslo uživatele Pi";
-"Код равлика залишиться в буфері обміну для повторного введення. Wi-Fi і сервіси Pi залишаться налаштованими." = "Kód šneka zůstane ve schránce pro opětovné zadání. Wi-Fi a služby Pi zůstanou nastavené.";
+"Код равлика залишиться в буфері обміну для повторного введення. Wi-Fi і сервіси Pi залишаться налаштованими." = "Kód Šlimaka zůstane ve schránce pro opětovné zadání. Wi-Fi a služby Pi zůstanou nastavené.";
 "Скасувати" = "Zrušit";
 "Скинути підключення" = "Resetovat připojení";
-"Запам’ятати равлика" = "Zapamatovat šneka";
-"Введи пароль або код самого равлика. Цей Mac запам’ятає доступ — наступного разу знадобиться лише «Підключити»." = "Zadej heslo nebo kód samotného šneka. Tento Mac si přístup zapamatuje — příště stačí „Připojit“.";
+"Запам’ятати равлика" = "Zapamatovat Šlimaka";
+"Введи пароль або код самого равлика. Цей Mac запам’ятає доступ — наступного разу знадобиться лише «Підключити»." = "Zadej heslo nebo kód samotného Šlimaka. Tento Mac si přístup zapamatuje — příště stačí „Připojit“.";
 "Обери пристрій" = "Vyber zařízení";
-"Пароль або код равлика" = "Heslo nebo kód šneka";
+"Пароль або код равлика" = "Heslo nebo kód Šlimaka";
 "Це не пароль MacBook і не пароль користувача Raspberry Pi." = "Nejde o heslo k MacBooku ani o heslo uživatele Raspberry Pi.";
 "Підключити й запам’ятати" = "Připojit a zapamatovat";
-"Пароль самого равлика" = "Heslo samotného šneka";
+"Пароль самого равлика" = "Heslo samotného Šlimaka";
 "Цей пароль вводитимеш при першому підключенні нового Mac. На цьому Mac доступ збережеться автоматично." = "Toto heslo zadáš při prvním připojení nového Macu. Na tomto Macu se přístup uloží automaticky.";
-"Новий пароль равлика" = "Nové heslo šneka";
+"Новий пароль равлика" = "Nové heslo Šlimaka";
 "Повтори новий пароль" = "Zopakuj nové heslo";
 "4–128 символів. Для постійного використання краще фраза з кількох слів." = "4–128 znaků. Pro běžné používání je vhodnější fráze z několika slov.";
 "Поточний пароль користувача Pi" = "Současné heslo uživatele Pi";
 "Потрібен власнику для запису зміни на Pi. Не зберігається. Пароль входу в сам Raspberry Pi залишиться попереднім." = "Vlastník ho potřebuje k uložení změny na Pi. Neukládá se. Přihlašovací heslo samotného Raspberry Pi zůstane stejné.";
 "Зберегти пароль" = "Uložit heslo";
-"Wi-Fi для равлика" = "Wi-Fi pro šneka";
-"Вкажи мережу, до якої підключений цей Mac. Равлик запам’ятає її для наступних увімкнень." = "Zadej síť, ke které je připojený tento Mac. Šnek si ji zapamatuje pro další zapnutí.";
+"Wi-Fi для равлика" = "Wi-Fi pro Šlimaka";
+"Вкажи мережу, до якої підключений цей Mac. Равлик запам’ятає її для наступних увімкнень." = "Zadej síť, ke které je připojený tento Mac. Šlimak si ji zapamatuje pro další zapnutí.";
 "Назва Wi-Fi" = "Název Wi-Fi sítě";
 "Пароль Wi-Fi" = "Heslo Wi-Fi";
 "Pi 3 використовує мережу 2,4 ГГц із особистим паролем WPA2. Гостьова мережа має дозволяти зв’язок між пристроями." = "Pi 3 používá síť 2,4 GHz s heslem WPA2 Personal. Síť pro hosty musí umožňovat komunikaci mezi zařízeními.";
 "Зберегти й підключити" = "Uložit a připojit";
 "Готовий до підключення" = "Připraveno k připojení";
 "Один раз встанови сервіс на Pi. Потім запускай камеру тут." = "Jednou nainstaluj službu na Pi. Potom kameru spouštěj tady.";
-"Відкрий «Перше підключення» й підготуй свій Pi або знайди готового равлика через Bluetooth." = "Otevři nastavení a připrav své Pi, nebo vyhledej připraveného šneka přes Bluetooth.";
+"Відкрий «Перше підключення» й підготуй свій Pi або знайди готового равлика через Bluetooth." = "Otevři nastavení a připrav své Pi, nebo vyhledej připraveného Šlimaka přes Bluetooth.";
 "Сервіс Pi повернув помилку." = "Služba Pi vrátila chybu.";
 "SSH не підключився. " = "SSH se nepodařilo připojit. ";
 "Pi недоступний. Перевір адресу, Wi-Fi та встановлення сервісу." = "Pi není dostupné. Zkontroluj adresu, Wi-Fi a instalaci služby.";
@@ -69,15 +69,15 @@
 "Натисни «Знайти через Bluetooth»." = "Klikni na „Vyhledat přes Bluetooth“.";
 "Дозволь Bluetooth для DenDenMushi у параметрах приватності Mac." = "Povol DenDenMushi přístup k Bluetooth v nastavení soukromí Macu.";
 "Увімкни Bluetooth на Mac і натисни «Підключити» ще раз." = "Zapni Bluetooth na Macu a znovu klikni na „Připojit“.";
-"Равлика не знайдено. Увімкни його й піднеси ближче. Якщо це новий пристрій, його власник має один раз підготувати Pi." = "Šnek nenalezen. Zapni ho a přesuň blíž. Nové zařízení musí vlastník nejdříve jednou připravit.";
-"Шукаю равлика поруч…" = "Hledám šneka v okolí…";
-"Равлика не знайдено. Увімкни Pi. Якщо це нова збірка — спочатку підготуй його нижче." = "Šnek nenalezen. Zapni Pi. Pokud jde o novou sestavu, nejdříve ji připrav níže.";
+"Равлика не знайдено. Увімкни його й піднеси ближче. Якщо це новий пристрій, його власник має один раз підготувати Pi." = "Šlimak nenalezen. Zapni ho a přesuň blíž. Nové zařízení musí vlastník nejdříve jednou připravit.";
+"Шукаю равлика поруч…" = "Hledám Šlimaka v okolí…";
+"Равлика не знайдено. Увімкни Pi. Якщо це нова збірка — спочатку підготуй його нижче." = "Šlimak nenalezen. Zapni Pi. Pokud jde o novou sestavu, nejdříve ji připrav níže.";
 "Обери свій DenDenMushi." = "Vyber svůj DenDenMushi.";
 "Увімкни Bluetooth на Mac." = "Zapni Bluetooth na Macu.";
 "Дозволь Bluetooth для DenDenMushi в Системних параметрах → Приватність і безпека → Bluetooth." = "Povol Bluetooth pro DenDenMushi v Nastavení systému → Soukromí a zabezpečení → Bluetooth.";
 "Bluetooth Low Energy недоступний на цьому Mac." = "Bluetooth Low Energy není na tomto Macu dostupné.";
 "Готую Bluetooth…" = "Připravuji Bluetooth…";
-"Равлика знайдено." = "Šnek nalezen.";
+"Равлика знайдено." = "Šlimak nalezen.";
 "Увімкни Bluetooth і повтори пошук." = "Zapni Bluetooth a zopakuj hledání.";
 "Pi не відповідає через Bluetooth. Піднеси його ближче й повтори." = "Pi neodpovídá přes Bluetooth. Přesuň ho blíž a zkus to znovu.";
 "Pi має іншу версію сервісу. Повтори його підготовку." = "Pi má jinou verzi služby. Zopakuj jeho přípravu.";
@@ -87,8 +87,8 @@
 "Сервіс Bluetooth неповний. Онови Pi через підготовку." = "Služba Bluetooth není úplná. Aktualizuj Pi v části přípravy.";
 "Немає з’єднання Bluetooth." = "Žádné spojení Bluetooth.";
 "Pi не відповів. Повтори Bluetooth-підключення." = "Pi neodpovědělo. Zkus připojení přes Bluetooth znovu.";
-"Pi не прийняв налаштування. Перевір код равлика й підключись повторно." = "Pi nepřijalo nastavení. Zkontroluj kód šneka a připoj se znovu.";
-"Pi відхилив Bluetooth-повідомлення. Перевір код равлика. " = "Pi odmítlo zprávu Bluetooth. Zkontroluj kód šneka. ";
+"Pi не прийняв налаштування. Перевір код равлика й підключись повторно." = "Pi nepřijalo nastavení. Zkontroluj kód Šlimaka a připoj se znovu.";
+"Pi відхилив Bluetooth-повідомлення. Перевір код равлика. " = "Pi odmítlo zprávu Bluetooth. Zkontroluj kód Šlimaka. ";
 "Bluetooth-з’єднання ще не готове." = "Spojení Bluetooth ještě není připravené.";
 "Некоректна відповідь Bluetooth." = "Neplatná odpověď Bluetooth.";
 "Пошкоджена відповідь Bluetooth." = "Poškozená odpověď Bluetooth.";
@@ -110,9 +110,9 @@
 "Передаю налаштування на Pi…" = "Odesílám nastavení na Pi…";
 "Готую камеру й Bluetooth. Це може тривати кілька хвилин…" = "Připravuji kameru a Bluetooth. Může to trvat několik minut…";
 "Сервіс встановлено, але Pi не повернув код налаштування. Повтори підготовку." = "Služba byla nainstalována, ale Pi nevrátilo kód nastavení. Zopakuj přípravu.";
-"Введи код равлика: 32 символи. Його показує застосунок після першої підготовки Pi." = "Zadej 32znakový kód šneka, který aplikace zobrazí po první přípravě Pi.";
-"Введи пароль равлика: 4–128 символів, без пробілів на початку й у кінці." = "Zadej heslo šneka o délce 4–128 znaků, bez mezer na začátku a na konci.";
-"Не вдалося підготувати пароль равлика." = "Nepodařilo se připravit heslo šneka.";
+"Введи код равлика: 32 символи. Його показує застосунок після першої підготовки Pi." = "Zadej 32znakový kód Šlimaka, který aplikace zobrazí po první přípravě Pi.";
+"Введи пароль равлика: 4–128 символів, без пробілів на початку й у кінці." = "Zadej heslo Šlimaka o délce 4–128 znaků, bez mezer na začátku a na konci.";
+"Не вдалося підготувати пароль равлика." = "Nepodařilo se připravit heslo Šlimaka.";
 "Невірна відповідь Bluetooth. Підключися повторно." = "Neplatná odpověď Bluetooth. Připoj se znovu.";
 "Bluetooth повернув невірну відповідь." = "Bluetooth vrátilo neplatnou odpověď.";
 "Pi відхилив налаштування." = "Pi odmítlo nastavení.";
@@ -129,40 +129,40 @@
 "OBS не підтримує потрібний протокол керування." = "OBS nepodporuje požadovaný řídicí protokol.";
 "OBS відхилив доступ." = "OBS odmítlo přístup.";
 "OBS ще не готовий. Повтори підключення." = "OBS ještě není připravené. Zkus připojení znovu.";
-"Увімкни равлика й натисни «Підключити»." = "Zapni šneka a klikni na „Připojit“.";
-"Равлик збережений на цьому Mac. Достатньо натиснути «Підключити»." = "Šnek je uložený na tomto Macu. Stačí kliknout na „Připojit“.";
-"Підключи равлика на цьому Mac, щоб зберегти його код." = "Připoj šneka na tomto Macu, aby se uložil jeho kód.";
-"Код скопійовано. Передай його людині, якій дозволяєш підключатися до равлика." = "Kód zkopírován. Předej ho člověku, kterému chceš povolit připojení ke šnekovi.";
-"Спочатку збережи код равлика: він потрібен для повторного підключення." = "Nejdříve si ulož kód šneka. Budeš ho potřebovat pro nové připojení.";
+"Увімкни равлика й натисни «Підключити»." = "Zapni Šlimaka a klikni na „Připojit“.";
+"Равлик збережений на цьому Mac. Достатньо натиснути «Підключити»." = "Šlimak je uložený na tomto Macu. Stačí kliknout na „Připojit“.";
+"Підключи равлика на цьому Mac, щоб зберегти його код." = "Připoj Šlimaka na tomto Macu, aby se uložil jeho kód.";
+"Код скопійовано. Передай його людині, якій дозволяєш підключатися до равлика." = "Kód zkopírován. Předej ho člověku, kterému chceš povolit připojení ke Šlimakovi.";
+"Спочатку збережи код равлика: він потрібен для повторного підключення." = "Nejdříve si ulož kód Šlimaka. Budeš ho potřebovat pro nové připojení.";
 "Зупиняю камеру й видаляю доступ цього Mac…" = "Zastavuji kameru a odebírám přístup tohoto Macu…";
 "Доступ на Pi видалено. Не вдалося скопіювати код — повтори скидання." = "Přístup na Pi byl odebrán. Kód se nepodařilo zkopírovat — zopakuj reset.";
 "Готовий до першого підключення" = "Připraveno k prvnímu připojení";
-"Натисни «Підключити». Код равлика збережено в буфері обміну — встав його через ⌘V." = "Klikni na „Připojit“. Kód šneka je ve schránce — vlož ho pomocí ⌘V.";
+"Натисни «Підключити». Код равлика збережено в буфері обміну — встав його через ⌘V." = "Klikni na „Připojit“. Kód Šlimaka je ve schránce — vlož ho pomocí ⌘V.";
 "Не вдалося завершити скидання." = "Reset se nepodařilo dokončit.";
 "Новий пароль і повторення мають збігатися." = "Nové heslo a jeho potvrzení se musí shodovat.";
-"Змінюю пароль равлика…" = "Měním heslo šneka…";
-"Пароль равлика змінено й збережено на цьому Mac. Підключаю камеру…" = "Heslo šneka bylo změněno a uloženo na tomto Macu. Připojuji kameru…";
+"Змінюю пароль равлика…" = "Měním heslo Šlimaka…";
+"Пароль равлика змінено й збережено на цьому Mac. Підключаю камеру…" = "Heslo Šlimaka bylo změněno a uloženo na tomto Macu. Připojuji kameru…";
 "Зміну пароля не підтверджено. Повтори цю дію." = "Změna hesla nebyla potvrzena. Zopakuj tuto akci.";
-"Підключення скасовано. Збережений равлик залишається доступним." = "Připojení zrušeno. Uložený šnek je stále dostupný.";
+"Підключення скасовано. Збережений равлик залишається доступним." = "Připojení zrušeno. Uložený Šlimak je stále dostupný.";
 "Pi не підтвердив свою адресу." = "Pi nepotvrdilo svou adresu.";
 "Змінився ключ збереженого Pi. Перевір пристрій перед новим підключенням." = "Klíč uloženého Pi se změnil. Před dalším připojením zkontroluj zařízení.";
-"Шукаю равлика через Bluetooth…" = "Hledám šneka přes Bluetooth…";
-"Підключаю збереженого равлика…" = "Připojuji uloženého šneka…";
-"Поруч кілька равликів. Обери свого." = "V okolí je více šneků. Vyber toho svého.";
-"Введи код равлика один раз." = "Jednou zadej kód šneka.";
+"Шукаю равлика через Bluetooth…" = "Hledám Šlimaka přes Bluetooth…";
+"Підключаю збереженого равлика…" = "Připojuji uloženého Šlimaka…";
+"Поруч кілька равликів. Обери свого." = "V okolí je více Šlimaků. Vyber toho svého.";
+"Введи код равлика один раз." = "Jednou zadej kód Šlimaka.";
 "Знаходжу камеру в Wi-Fi…" = "Hledám kameru ve Wi-Fi…";
-"Равлика знайдено. Підключимо його до мережі цього Mac." = "Šnek nalezen. Připojíme ho k síti tohoto Macu.";
-"Равлик підключений. Код і доступ збережені на цьому Mac." = "Šnek připojen. Jeho kód a přístup jsou uložené na tomto Macu.";
+"Равлика знайдено. Підключимо його до мережі цього Mac." = "Šlimak nalezen. Připojíme ho k síti tohoto Macu.";
+"Равлик підключений. Код і доступ збережені на цьому Mac." = "Šlimak připojen. Jeho kód a přístup jsou uložené na tomto Macu.";
 "Не вдалося підключитися" = "Připojení se nezdařilo";
 "Введи назву Wi-Fi та пароль." = "Zadej název Wi-Fi sítě a heslo.";
-"Обери свого равлика." = "Vyber svého šneka.";
-"Передаю мережу равлику через Bluetooth…" = "Předávám šnekovi nastavení sítě přes Bluetooth…";
+"Обери свого равлика." = "Vyber svého Šlimaka.";
+"Передаю мережу равлику через Bluetooth…" = "Předávám Šlimakovi nastavení sítě přes Bluetooth…";
 "Перевіряю доступ через Wi-Fi…" = "Ověřuji přístup přes Wi-Fi…";
 "Pi отримав налаштування, але Mac не може до нього дістатися. Перевір, що Mac у цій самій мережі й вона дозволяє зв’язок між пристроями." = "Pi přijalo nastavení, ale Mac se k němu nemůže připojit. Zkontroluj, že je Mac ve stejné síti a že síť umožňuje komunikaci mezi zařízeními.";
 "Мережу збережено. Надалі достатньо «Підключити»." = "Síť uložena. Příště stačí „Připojit“.";
 "Не вдалося підключити Wi-Fi." = "Připojení k Wi-Fi se nezdařilo.";
 "Pi не повернув код налаштування." = "Pi nevrátilo kód nastavení.";
-"Pi підготовлений. Підключаю равлика й запам’ятовую доступ…" = "Pi je připravené. Připojuji šneka a ukládám přístup…";
+"Pi підготовлений. Підключаю равлика й запам’ятовую доступ…" = "Pi je připravené. Připojuji Šlimaka a ukládám přístup…";
 "Підготовка потребує уваги." = "Příprava vyžaduje pozornost.";
 "Аудіопристрій уже від’єднано. Онови список." = "Zvukové zařízení bylo odpojeno. Obnov seznam.";
 "Не вдалося вибрати аудіопристрій (%@)." = "Zvukové zařízení se nepodařilo vybrat (%@).";
@@ -172,7 +172,7 @@
 "Зупинити камеру" = "Zastavit kameru";
 "Підключити камеру" = "Připojit kameru";
 "Завершити" = "Ukončit";
-"Камера та звук твого равлика" = "Kamera a zvuk tvého šneka";
+"Камера та звук твого равлика" = "Kamera a zvuk tvého Šlimaka";
 "Камера і звук" = "Kamera a zvuk";
 "Налаштування" = "Nastavení";
 "Камера" = "Kamera";
@@ -192,7 +192,7 @@
 "Залишити поточний" = "Ponechat současný vstup";
 "Застосувати звук" = "Použít zvuk";
 "Підключити звук через Bluetooth" = "Připojit zvuk přes Bluetooth";
-"Спаруй равлика з Mac один раз. Коли він підключений, його доступні динаміки й мікрофон з’являться у списках." = "Jednou spáruj šneka s Macem. Po připojení se jeho dostupné reproduktory a mikrofon objeví v seznamech.";
+"Спаруй равлика з Mac один раз. Коли він підключений, його доступні динаміки й мікрофон з’являться у списках." = "Jednou spáruj Šlimaka s Macem. Po připojení se jeho dostupné reproduktory a mikrofon objeví v seznamech.";
 "У дзвінку вибери ці аудіопристрої або «За замовчуванням»." = "V hovoru vyber tato zvuková zařízení nebo možnost „Výchozí“.";
 "Мова програми" = "Jazyk aplikace";
 "Мова змінюється одразу й запам’ятовується на цьому Mac." = "Jazyk se změní ihned a uloží se na tomto Macu.";
@@ -210,26 +210,26 @@
 "Динамік від’єднано. Натисни «Повторити звук»." = "Reproduktor se odpojil. Klikni na Zkusit zvuk znovu.";
 "Онови службу Pi один раз для автоматичного звуку." = "Pro automatický zvuk jednou aktualizuj službu na Pi.";
 "Увімкни Bluetooth на Mac і повтори підключення звуку." = "Zapni Bluetooth na Macu a zkus zvuk znovu.";
-"Підключаю динаміки равлика…" = "Připojuji reproduktory šneka…";
-"Динаміки равлика підключено. Мікрофон — поточний." = "Reproduktory šneka připojeny. Mikrofon zůstává aktuální.";
-"Mac ще не бачить аудіовихід равлика. Натисни «Повторити звук»." = "Mac zatím nevidí zvukový výstup šneka. Klikni na Zkusit zvuk znovu.";
+"Підключаю динаміки равлика…" = "Připojuji reproduktory Šlimaka…";
+"Динаміки равлика підключено. Мікрофон — поточний." = "Reproduktory Šlimaka připojeny. Mikrofon zůstává aktuální.";
+"Mac ще не бачить аудіовихід равлика. Натисни «Повторити звук»." = "Mac zatím nevidí zvukový výstup Šlimaka. Klikni na Zkusit zvuk znovu.";
 "Звук не підключився. Камера працює; повтори підключення звуку." = "Zvuk se nepřipojil. Kamera funguje; zkus zvuk znovu.";
-"Один раз спаруй равлика з Mac через Bluetooth, потім повтори звук." = "Jednou spáruj šneka s Macem přes Bluetooth a pak zkus zvuk znovu.";
+"Один раз спаруй равлика з Mac через Bluetooth, потім повтори звук." = "Jednou spáruj Šlimaka s Macem přes Bluetooth a pak zkus zvuk znovu.";
 "Підключи USB-звукову карту до Raspberry Pi." = "Připoj USB zvukovou kartu k Raspberry Pi.";
-"До Pi підключено кілька USB-аудіовиходів. Залиш один для равлика." = "K Pi je připojeno více USB zvukových výstupů. Nech připojený jeden pro šneka.";
+"До Pi підключено кілька USB-аудіовиходів. Залиш один для равлика." = "K Pi je připojeno více USB zvukových výstupů. Nech připojený jeden pro Šlimaka.";
 "Звукова служба Pi недоступна. Перевір її налаштування." = "Zvuková služba na Pi není dostupná. Zkontroluj její nastavení.";
 "Оновити Pi" = "Aktualizovat Pi";
 "Повторити звук" = "Zkusit zvuk znovu";
 "Перше аудіоспарювання — один раз. Далі кнопка «Підключити» запускає камеру й динаміки." = "Zvuk spáruj jednou. Potom tlačítko Připojit spustí kameru i reproduktory.";
-"Підключи равлика, щоб регулювати його звук." = "Připoj šneka a nastav jeho zvuk.";
+"Підключи равлика, щоб регулювати його звук." = "Připoj Šlimaka a nastav jeho zvuk.";
 "Не вдалося прочитати рівні звуку Pi." = "Nepodařilo se načíst úrovně zvuku Pi.";
 "Рівні USB-звукової карти Pi. 0 дБ — без приглушення." = "Úrovně USB zvukové karty Pi. 0 dB znamená bez zeslabení.";
 "Підключи одну USB-звукову карту до Pi." = "Připoj k Pi jednu USB zvukovou kartu.";
 "Онови службу Pi один раз для регулювання гучності." = "Pro ovládání hlasitosti jednou aktualizuj službu Pi.";
 "Не вдалося оновити гучність. Натисни оновлення звуку." = "Hlasitost se nepodařilo aktualizovat. Obnov zvuk.";
-"Гучність динаміків равлика" = "Hlasitost reproduktorů šneka";
-"Рівень мікрофона равлика" = "Úroveň mikrofonu šneka";
-"Передавання мікрофона равлика в дзвінок ще не налаштоване." = "Přenos mikrofonu šneka do hovoru ještě není nastaven.";
+"Гучність динаміків равлика" = "Hlasitost reproduktorů Šlimaka";
+"Рівень мікрофона равлика" = "Úroveň mikrofonu Šlimaka";
+"Передавання мікрофона равлика в дзвінок ще не налаштоване." = "Přenos mikrofonu Šlimaka do hovoru ještě není nastaven.";
 "Увімкнути звук" = "Zapnout zvuk";
 "Вимкнути звук" = "Vypnout zvuk";
 
@@ -244,32 +244,32 @@
 "Динаміки: мініджек Raspberry Pi. Мікрофон: USB-карта. 0 дБ — без приглушення." = "Reproduktory: minijack Raspberry Pi. Mikrofon: USB karta. 0 dB znamená bez zeslabení.";
 "Bluetooth на Pi вимкнений або заблокований. Не вдалося його ввімкнути." = "Bluetooth na Pi je vypnutý nebo blokovaný. Nepodařilo se ho zapnout.";
 "Bluetooth-аудіоз’єднання не відновилося. Повтори підключення звуку." = "Zvukové připojení Bluetooth se nepodařilo obnovit. Zkus zvuk připojit znovu.";
-"Мікрофон равлика ще не передається на Mac. Вибери інший мікрофон для дзвінка." = "Mikrofon šneka se zatím nepřenáší do Macu. Pro hovor vyber jiný mikrofon.";
+"Мікрофон равлика ще не передається на Mac. Вибери інший мікрофон для дзвінка." = "Mikrofon Šlimaka se zatím nepřenáší do Macu. Pro hovor vyber jiný mikrofon.";
 "Вибери інший мікрофон на Mac або в застосунку дзвінків, потім повтори звук." = "Vyber jiný mikrofon na Macu nebo v aplikaci pro hovory a pak zkus zvuk znovu.";
-"На Mac вибрано непідготовлений мікрофон равлика. Натисни «Повторити звук» або вибери інший мікрофон у дзвінку." = "Na Macu je vybraný mikrofon šneka, ale přenos do hovoru ještě není připraven. Zkus zvuk znovu nebo pro hovor vyber jiný mikrofon.";
+"На Mac вибрано непідготовлений мікрофон равлика. Натисни «Повторити звук» або вибери інший мікрофон у дзвінку." = "Na Macu je vybraný mikrofon Šlimaka, ale přenos do hovoru ještě není připraven. Zkus zvuk znovu nebo pro hovor vyber jiný mikrofon.";
 "Ще недоступний" = "Zatím nedostupný";
-"Динаміки равлика підключено. Для дзвінків вибрано мікрофон Mac." = "Reproduktory šneka jsou připojené. Pro hovory je vybraný mikrofon Macu.";
+"Динаміки равлика підключено. Для дзвінків вибрано мікрофон Mac." = "Reproduktory Šlimaka jsou připojené. Pro hovory je vybraný mikrofon Macu.";
 "Для дзвінків вибрано мікрофон Mac. У Meet обери його або «За замовчуванням»." = "Pro hovory je vybraný mikrofon Macu. V Meet vyber tento mikrofon nebo výchozí zařízení.";
 
-"Мікрофон равлика" = "Mikrofon šneka";
+"Мікрофон равлика" = "Mikrofon Šlimaka";
 "Експериментальний режим дзвінка: мікрофон і динаміки через Bluetooth, моно зі звуком телефонної якості." = "Experimentální režim hovoru: mikrofon a reproduktory přes Bluetooth, mono se zvukem telefonní kvality.";
 "Режим застосуємо при наступному підключенні." = "Tento režim se použije při příštím připojení.";
 "У Telegram вибери мікрофон DenDenMushi або системний за замовчуванням." = "V Telegramu vyber mikrofon DenDenMushi nebo výchozí systémový mikrofon.";
-"Mac ще не бачить мікрофон равлика. Повтори підключення звуку." = "Mac zatím nevidí mikrofon šneka. Zopakuj připojení zvuku.";
-"На Mac вибрано інший мікрофон. Повтори звук, щоб увімкнути мікрофон равлика." = "Na Macu je vybraný jiný mikrofon. Zopakuj připojení zvuku pro zapnutí mikrofonu šneka.";
-"Мікрофон равлика не запустився через Bluetooth. Камера працює; повтори звук." = "Mikrofon šneka se přes Bluetooth nespustil. Kamera funguje; zopakuj připojení zvuku.";
-"Онови Pi один раз, щоб передавати мікрофон равлика на Mac." = "Jednou aktualizuj Pi pro přenos mikrofonu šneka do Macu.";
-"Підключаю мікрофон і динаміки равлика…" = "Připojuji mikrofon a reproduktory šneka…";
-"Мікрофон і динаміки равлика готові. У Telegram вибери DenDenMushi або «За замовчуванням»." = "Mikrofon a reproduktory šneka jsou připravené. V Telegramu vyber DenDenMushi nebo Výchozí.";
+"Mac ще не бачить мікрофон равлика. Повтори підключення звуку." = "Mac zatím nevidí mikrofon Šlimaka. Zopakuj připojení zvuku.";
+"На Mac вибрано інший мікрофон. Повтори звук, щоб увімкнути мікрофон равлика." = "Na Macu je vybraný jiný mikrofon. Zopakuj připojení zvuku pro zapnutí mikrofonu Šlimaka.";
+"Мікрофон равлика не запустився через Bluetooth. Камера працює; повтори звук." = "Mikrofon Šlimaka se přes Bluetooth nespustil. Kamera funguje; zopakuj připojení zvuku.";
+"Онови Pi один раз, щоб передавати мікрофон равлика на Mac." = "Jednou aktualizuj Pi pro přenos mikrofonu Šlimaka do Macu.";
+"Підключаю мікрофон і динаміки равлика…" = "Připojuji mikrofon a reproduktory Šlimaka…";
+"Мікрофон і динаміки равлика готові. У Telegram вибери DenDenMushi або «За замовчуванням»." = "Mikrofon a reproduktory Šlimaka jsou připravené. V Telegramu vyber DenDenMushi nebo Výchozí.";
 "Мікрофон вибрано. Почни запис у Telegram; очікую аудіоз’єднання." = "Mikrofon je vybraný. Spusť nahrávání v Telegramu; čekám na zvukové spojení.";
 "Підключи мікрофон до червоного входу USB-карти на Pi." = "Připoj mikrofon do červeného vstupu USB zvukové karty na Pi.";
-"До Pi підключено кілька USB-мікрофонів. Залиш один для равлика." = "K Pi je připojeno více USB mikrofonů. Nech připojený jeden pro šneka.";
+"До Pi підключено кілька USB-мікрофонів. Залиш один для равлика." = "K Pi je připojeno více USB mikrofonů. Nech připojený jeden pro Šlimaka.";
 
 "Понад 0 дБ підсилює голос і фоновий шум." = "Nad 0 dB se zesiluje hlas i šum na pozadí.";
-"Відновлюю Bluetooth-мікрофон равлика. Звук коротко перерветься…" = "Obnovuji Bluetooth mikrofon šneka. Zvuk se krátce přeruší…";
-"Mac показує кілька входів равлика. Не вдалося вибрати мікрофон однозначно." = "Mac zobrazuje více vstupů šneka. Mikrofon nelze jednoznačně vybrat.";
+"Відновлюю Bluetooth-мікрофон равлика. Звук коротко перерветься…" = "Obnovuji Bluetooth mikrofon Šlimaka. Zvuk se krátce přeruší…";
+"Mac показує кілька входів равлика. Не вдалося вибрати мікрофон однозначно." = "Mac zobrazuje více vstupů Šlimaka. Mikrofon nelze jednoznačně vybrat.";
 "Pi ще перемикає звук. Повтори підключення за кілька секунд." = "Pi stále přepíná zvuk. Zkus připojení znovu za několik sekund.";
-"Мікрофон равлика підключено. Перевір голос пробним записом." = "Mikrofon šneka je připojený. Ověř hlas zkušební nahrávkou.";
+"Мікрофон равлика підключено. Перевір голос пробним записом." = "Mikrofon Šlimaka je připojený. Ověř hlas zkušební nahrávkou.";
 "Підключи керування сервами." = "Připoj ovládání serv.";
 "Керування сервами на Pi недоступне. Перевір живлення Pi та оновлення сервісу." = "Ovládání serv na Pi není dostupné. Zkontroluj napájení Pi a aktualizaci služby.";
 "Підключаю керування сервами…" = "Připojuji ovládání serv…";
@@ -278,7 +278,7 @@
 "Керування готове. Вибери серву й натисни «Перемістити»." = "Ovládání je připravené. Vyber servo a stiskni Posunout.";
 "Керування не підключено." = "Ovládání není připojené.";
 "З’єднання із сервами втрачено. Імпульси вимкнуться на Pi автоматично." = "Spojení se servy bylo přerušeno. Pi automaticky vypne impulzy.";
-"Рух равлика" = "Pohyb šneka";
+"Рух равлика" = "Pohyb Šlimaka";
 "Відпустити всі" = "Uvolnit všechna";
 "Від’єднати керування" = "Odpojit ovládání";
 "Підключити керування" = "Připojit ovládání";
@@ -411,7 +411,7 @@
 
 "Звук очікування" = "Zvuk čekání";
 
-"Повторюється після запуску равлика до підключення. Зберігається на Pi та працює без інтернету." = "Opakuje se po spuštění šneka až do připojení. Uloženo na Pi, funguje bez internetu.";
+"Повторюється після запуску равлика до підключення. Зберігається на Pi та працює без інтернету." = "Opakuje se po spuštění Šlimaka až do připojení. Uloženo na Pi, funguje bez internetu.";
 
 "Увімкнути звук очікування" = "Zapnout zvuk čekání";
 
@@ -419,29 +419,29 @@
 
 "Загальна гучність і вимкнення звуку динаміків також діють." = "Platí také hlavní hlasitost a ztlumení reproduktorů.";
 
-"Підключи равлика, щоб зберегти налаштування." = "Připoj šneka pro uložení nastavení.";
+"Підключи равлика, щоб зберегти налаштування." = "Připoj Šlimaka pro uložení nastavení.";
 
 "Онови Pi, щоб налаштувати звук очікування." = "Aktualizuj Pi pro nastavení zvuku čekání.";
 
-"Збережено на равлику." = "Uloženo na šnekovi.";
+"Збережено на равлику." = "Uloženo na Šlimakovi.";
 
 "Зберегти" = "Uložit";
 
 "Закрити" = "Zavřít";
 
-"Підключити равлика" = "Připojit šneka";
+"Підключити равлика" = "Připojit Šlimaka";
 
 "Повністю від’єднати" = "Úplně odpojit";
 
-"Від’єдную равлика…" = "Odpojuji šneka…";
+"Від’єдную равлика…" = "Odpojuji Šlimaka…";
 
-"Равлик від’єднаний" = "Šnek odpojen";
+"Равлик від’єднаний" = "Šlimak odpojen";
 
 "Від’єднано з попередженням" = "Odpojeno s upozorněním";
 
-"Камеру, звук і керування сервами завершено. Равлик залишається увімкненим." = "Kamera, zvuk a ovládání serv jsou ukončeny. Šnek zůstává zapnutý.";
+"Камеру, звук і керування сервами завершено. Равлик залишається увімкненим." = "Kamera, zvuk a ovládání serv jsou ukončeny. Šlimak zůstává zapnutý.";
 
-"Не вдалося закрити Bluetooth-з’єднання равлика." = "Nepodařilo se ukončit Bluetooth připojení šneka.";
+"Не вдалося закрити Bluetooth-з’єднання равлика." = "Nepodařilo se ukončit Bluetooth připojení Šlimaka.";
 
 "Час руху: 0,5 с — фіксований" = "Doba pohybu: 0,5 s — pevná";
 
@@ -449,7 +449,7 @@
 
 "Спочатку до «Від» за 0,5 с, потім до «До» за 0,5 с. Межі: 3–33°. Зміна полів не запускає рух." = "Nejprve do Od za 0,5 s, potom do Do za 0,5 s. Meze: 3–33°. Úprava polí nespustí pohyb.";
 
-"Серви підключаються разом із равликом." = "Serva se připojí společně se šnekem.";
+"Серви підключаються разом із равликом." = "Serva se připojí společně se Šlimakem.";
 
 "Зупинити всі" = "Zastavit všechna";
 
@@ -491,7 +491,7 @@
 
 "Останнє підключення" = "Poslední připojení";
 
-"Підключи равлика, щоб переглянути історію." = "Pro zobrazení historie připoj šneka.";
+"Підключи равлика, щоб переглянути історію." = "Pro zobrazení historie připoj Šlimaka.";
 
 "Онови сервіс Pi для історії пристроїв." = "Pro historii zařízení aktualizuj službu Pi.";
 
@@ -499,27 +499,27 @@
 
 "Історія поки порожня." = "Historie je zatím prázdná.";
 
-"Історія зберігається на равлику з моменту цього оновлення. Для раніше збережених Bluetooth-пристроїв старі дати невідомі. Один пристрій може мати окремі записи програми та Bluetooth." = "Historie se ukládá ve šnekovi od této aktualizace. Starší data dříve uložených zařízení Bluetooth nejsou známá. Jedno zařízení může mít samostatný záznam aplikace a Bluetooth.";
+"Історія зберігається на равлику з моменту цього оновлення. Для раніше збережених Bluetooth-пристроїв старі дати невідомі. Один пристрій може мати окремі записи програми та Bluetooth." = "Historie se ukládá ve Šlimakovi od této aktualizace. Starší data dříve uložených zařízení Bluetooth nejsou známá. Jedno zařízení může mít samostatný záznam aplikace a Bluetooth.";
 
-"Мережі Wi-Fi равлика" = "Wi-Fi sítě šneka";
+"Мережі Wi-Fi равлика" = "Wi-Fi sítě Šlimaka";
 
 "Слідувати за Wi-Fi ноутбука" = "Sledovat Wi-Fi notebooku";
 
-"Після зміни мережі Mac равлик переходить у ту саму збережену мережу через Bluetooth. Після повного від’єднання автоматичне підключення зупиняється." = "Po změně sítě Macu Bluetooth přepne šneka do stejné uložené sítě. Úplné odpojení zastaví automatické připojování.";
+"Після зміни мережі Mac равлик переходить у ту саму збережену мережу через Bluetooth. Після повного від’єднання автоматичне підключення зупиняється." = "Po změně sítě Macu Bluetooth přepne Šlimaka do stejné uložené sítě. Úplné odpojení zastaví automatické připojování.";
 
 "Назва мережі Mac недоступна. Дозволь доступ до геопозиції для автоматичного вибору Wi-Fi; координати не зберігаються." = "Název sítě Macu není dostupný. Povolte přístup k poloze pro automatický výběr Wi-Fi; souřadnice se neukládají.";
 
 "Дозволити визначення Wi-Fi" = "Povolit zjištění Wi-Fi";
 
-"Збережені на равлику мережі. Паролі залишаються на Pi. Для нової мережі пароль потрібен один раз." = "Sítě uložené ve šnekovi. Hesla zůstávají na Pi. Nová síť potřebuje heslo jednou.";
+"Збережені на равлику мережі. Паролі залишаються на Pi. Для нової мережі пароль потрібен один раз." = "Sítě uložené ve Šlimakovi. Hesla zůstávají na Pi. Nová síť potřebuje heslo jednou.";
 
 "Додати мережу…" = "Přidat síť…";
 
 "Невідома операція" = "Neznámá operace";
 
-"Вимикати звук, коли равлик не підключений" = "Ztišit šneka, když není připojený";
+"Вимикати звук, коли равлик не підключений" = "Ztišit Šlimaka, když není připojený";
 
-"Прибраний прапорець — равлик програє звук очікування. Встановлений — очікує мовчки. Вибір зберігається автоматично на равлику." = "Bez zaškrtnutí šnek přehrává čekací zvuk. Se zaškrtnutím čeká tiše. Volba se automaticky uloží ve šnekovi.";
+"Прибраний прапорець — равлик програє звук очікування. Встановлений — очікує мовчки. Вибір зберігається автоматично на равлику." = "Bez zaškrtnutí Šlimak přehrává čekací zvuk. Se zaškrtnutím čeká tiše. Volba se automaticky uloží ve Šlimakovi.";
 "Доступне оновлення з GitHub." = "Na GitHubu je dostupná nová verze.";
 "Установлено актуальну версію." = "Máte aktuální verzi.";
 "Не вдалося перевірити GitHub. Спробуй пізніше." = "GitHub nelze ověřit. Zkuste to později.";
@@ -530,7 +530,20 @@
 "Перевірити оновлення" = "Ověřit aktualizace";
 "Оновити й перезапустити" = "Aktualizovat a restartovat";
 "Оновлення закриє програму, збере нову версію в Terminal і відкриє її. Потрібні інструменти розробника та інтернет. Попередня копія збережеться поруч. Pi не оновлюється." = "Aktualizace zavře aplikaci, sestaví novou verzi v Terminálu a znovu ji otevře. Vyžaduje vývojové nástroje a internet. Záloha zůstane vedle aplikace. Pi se neaktualizuje.";
-"Спочатку від’єднай равлика та дочекайся завершення поточних дій." = "Nejprve odpojte šneka a počkejte na dokončení probíhajících operací.";
+"Спочатку від’єднай равлика та дочекайся завершення поточних дій." = "Nejprve odpojte Šlimaka a počkejte na dokončení probíhajících operací.";
 "Режим Bluetooth-парування не ввімкнувся." = "Režim párování Bluetooth se nespustil.";
-"Равлик від’єднаний, але режим парування недоступний. Онови службу Pi або підключайся через програму." = "Šnek je odpojen, ale režim párování není dostupný. Aktualizujte službu Pi nebo se připojte přes aplikaci.";
-"Равлик видимий у Bluetooth протягом 3 хвилин. На іншому Mac вибери DenDenMushi, потім відкрий програму й введи код равлика." = "Šnek je viditelný v Bluetooth po dobu 3 minut. Na druhém Macu vyberte DenDenMushi, pak otevřete aplikaci a zadejte kód šneka.";
+"Равлик від’єднаний, але режим парування недоступний. Онови службу Pi або підключайся через програму." = "Šlimak je odpojen, ale režim párování není dostupný. Aktualizujte službu Pi nebo se připojte přes aplikaci.";
+"Равлик видимий у Bluetooth протягом 3 хвилин. На іншому Mac вибери DenDenMushi, потім відкрий програму й введи код равлика." = "Šlimak je viditelný v Bluetooth po dobu 3 minut. Na druhém Macu vyberte DenDenMushi, pak otevřete aplikaci a zadejte kód Šlimaka.";
+"Налаштування звуку суперадміна" = "Nastavení zvuku superadministrátora";
+"Заблокувати налаштування звуку" = "Zamknout nastavení zvuku";
+"Гучність динаміків і підсилення мікрофона доступні після введення коду суперадміна." = "Hlasitost reproduktorů a zesílení mikrofonu jsou dostupné po zadání kódu superadministrátora.";
+"Код суперадміна" = "Kód superadministrátora";
+"Відкрити налаштування звуку" = "Odemknout nastavení zvuku";
+"Підключи равлика, щоб відкрити налаштування звуку." = "Připoj Šlimaka pro odemknutí nastavení zvuku.";
+"Онови сервіс Pi для доступу суперадміна." = "Pro přístup superadministrátora aktualizuj službu Pi.";
+"Введи код суперадміна." = "Zadej kód superadministrátora.";
+"Неправильний код суперадміна." = "Nesprávný kód superadministrátora.";
+"Забагато спроб. Спробуй ще раз пізніше." = "Příliš mnoho pokusů. Zkus to znovu později.";
+"Код суперадміна ще не налаштовано на равлику." = "Kód superadministrátora na Šlimakovi ještě není nastaven.";
+"Не вдалося відкрити налаштування звуку. Спробуй ще раз." = "Nastavení zvuku se nepodařilo odemknout. Zkus to znovu.";
+"Доступ суперадміна завершився. Введи код знову." = "Přístup superadministrátora vypršel. Zadej kód znovu.";

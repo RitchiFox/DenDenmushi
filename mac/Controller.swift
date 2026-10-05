@@ -5,6 +5,8 @@ import Network
 @MainActor
 final class Controller: NSObject, ObservableObject, @preconcurrency NetServiceBrowserDelegate, @preconcurrency NetServiceDelegate {
     let servos = ServoModel()
+    let audioAdmin = AudioAdminModel()
+    var audioAdminAvailable: Bool { piFeatures.contains("audio-admin-v1") }
     @Published var deviceHistory: [DeviceHistoryEntry] = []
     @Published var historyBusy = false
     @Published var historyMessage = ""
@@ -42,7 +44,7 @@ final class Controller: NSObject, ObservableObject, @preconcurrency NetServiceBr
         }
     }
 
-    @Published private(set) var audioTransport = UserDefaults.standard.string(forKey: "snailAudioTransport") == "wifi" ? "wifi" : "bluetooth"
+    @Published private(set) var audioTransport = UserDefaults.standard.string(forKey: "snailAudioTransport") == "bluetooth" ? "bluetooth" : "wifi"
     @Published var wifiDriverReady = WiFiAudioDevices.pair() != nil
     private var wifiAudio: WiFiAudioTransport?
     private var previousWiFiInput: String?
@@ -118,6 +120,11 @@ final class Controller: NSObject, ObservableObject, @preconcurrency NetServiceBr
 
     override init() {
         super.init()
+        audioAdmin.onLock = { [weak self] in
+            guard let self else { return }
+            self.levelsTask?.cancel(); self.levelsTask = nil; self.levelsBusy = false
+            self.levelQueue = AudioLevelQueue(); self.levelsReadRequested = false
+        }
         devices = SoundDevices.list()
         browser.delegate = self
         audioObserver = AudioDeviceObserver { [weak self] in
@@ -159,12 +166,22 @@ final class Controller: NSObject, ObservableObject, @preconcurrency NetServiceBr
         if let timeout { req.timeoutInterval = min(req.timeoutInterval, max(0.1, timeout)) }
         if let body { req.httpBody = try JSONSerialization.data(withJSONObject: body); req.setValue("application/json", forHTTPHeaderField: "Content-Type") }
         req.setValue("desktop-v1", forHTTPHeaderField: "X-DenDen-Client")
+        if path == "/audio/level" {
+            guard audioAdmin.unlocked, let token = audioAdmin.sessionToken else {
+                throw DemoError("Не вдалося оновити гучність. Натисни оновлення звуку.")
+            }
+            req.setValue(token, forHTTPHeaderField: "X-DenDen-Audio-Admin")
+        }
         if path == "/camera/start" || path == "/heartbeat" {
             req.setValue(historyDeviceID, forHTTPHeaderField: "X-DenDen-Device-ID")
             let name = String((Host.current().localizedName ?? "Mac").prefix(120))
             req.setValue(Data(name.utf8).base64EncodedString(), forHTTPHeaderField: "X-DenDen-Device-Name")
         }
         let (data, response) = try await URLSession.shared.data(for: req)
+        if path == "/audio/level", let status = (response as? HTTPURLResponse)?.statusCode, status == 401 || status == 403,
+           req.value(forHTTPHeaderField: "X-DenDen-Audio-Admin") == audioAdmin.sessionToken {
+            audioAdmin.invalidate()
+        }
         guard (response as? HTTPURLResponse)?.statusCode == 200,
               let result = try JSONSerialization.jsonObject(with: data) as? [String: Any] else { throw DemoError("Сервіс Pi повернув помилку.") }
         // Both call and playback transitions can collide with Pi's route
@@ -448,6 +465,7 @@ final class Controller: NSObject, ObservableObject, @preconcurrency NetServiceBr
     private var pairingOpenedOnDisconnect = false
 
     private func cleanup(fullDisconnect: Bool = false) async {
+        audioAdmin.lock()
         pairingOpenedOnDisconnect = false
         servoAutoConnect = false
         var bluetoothPeer = snailAudioAddress
@@ -917,6 +935,7 @@ final class Controller: NSObject, ObservableObject, @preconcurrency NetServiceBr
         }
     }
     func refreshLevels() {
+        levelQueue.retryFailed()
         levelsReadRequested = true
         startLevelSync()
     }
@@ -927,7 +946,8 @@ final class Controller: NSObject, ObservableObject, @preconcurrency NetServiceBr
         AudioGainRange.range(kind: kind, microphoneGainSupported: microphoneGainSupported)
     }
     func stageLevel(_ kind: String, db: Double? = nil, toggleMute: Bool = false) {
-        guard kind == "output" || kind == "input" else { return }
+        guard audioAdmin.unlocked, audioAdmin.sessionToken != nil,
+              kind == "output" || kind == "input" else { return }
         let draft = db ?? (kind == "output" ? speakerDB : microphoneDB)
         guard let clamped = AudioGainRange.clamp(draft, kind: kind, microphoneGainSupported: microphoneGainSupported) else { return }
         if kind == "output" {
@@ -941,19 +961,20 @@ final class Controller: NSObject, ObservableObject, @preconcurrency NetServiceBr
             muted: kind == "output" ? speakerMuted : microphoneMuted)
         startLevelSync()
     }
-    private func receiveLevels(_ result: [String: Any]) throws {
+    private func receiveLevels(_ result: [String: Any], revisions: [String: Int]) throws {
         guard result["ok"] as? Bool == true else { throw DemoError("Не вдалося прочитати рівні звуку Pi.") }
         let speaker = result["output"] as? [String: Any] ?? [:]
         let microphone = result["input"] as? [String: Any] ?? [:]
-        speakerLevelAvailable = speaker["available"] as? Bool == true
-        microphoneLevelAvailable = microphone["available"] as? Bool == true
         // A reply acknowledges the captured edit only. Never overwrite a newer
-        // drag/mute choice, including an edit on the other channel.
-        if !levelQueue.protects("output") {
+        // drag/mute choice, including an edit on the other channel, or disable
+        // a slider while its mouse gesture is still active.
+        if levelQueue.acceptsSnapshot("output", revisions: revisions) {
+            speakerLevelAvailable = speaker["available"] as? Bool == true
             if let db = speaker["db"] as? Double, let clamped = AudioGainRange.clamp(db, kind: "output", microphoneGainSupported: microphoneGainSupported) { speakerDB = clamped }
             speakerMuted = speaker["muted"] as? Bool ?? false
         }
-        if !levelQueue.protects("input") {
+        if levelQueue.acceptsSnapshot("input", revisions: revisions) {
+            microphoneLevelAvailable = microphone["available"] as? Bool == true
             if let db = microphone["db"] as? Double, let clamped = AudioGainRange.clamp(db, kind: "input", microphoneGainSupported: microphoneGainSupported) { microphoneDB = clamped }
             microphoneMuted = microphone["muted"] as? Bool ?? false
         }
@@ -983,49 +1004,80 @@ final class Controller: NSObject, ObservableObject, @preconcurrency NetServiceBr
         levelsTask = Task { [weak self] in
             guard let self else { return }
             defer { if !Task.isCancelled { self.levelsBusy = false; self.levelsTask = nil } }
-            while !Task.isCancelled && self.connected {
+            while !Task.isCancelled && self.connected && !self.busy && !self.preparing && !self.audioBusy {
                 // Coalesce rapid keyboard changes. During a mouse drag keep
                 // the draft local until release; do not disable the slider.
                 try? await Task.sleep(nanoseconds: 250_000_000)
-                guard !Task.isCancelled else { return }
-                let kind = self.levelQueue.nextKind
+                guard !Task.isCancelled, !self.busy, !self.preparing, !self.audioBusy else { return }
+                let kind = self.audioAdmin.unlocked ? self.levelQueue.nextKind : nil
                 let edit = kind.flatMap { self.levelQueue.pending[$0] }
                 if edit == nil && !self.levelsReadRequested {
-                    if self.levelQueue.pending.isEmpty { return }
-                    continue
+                    // Release or another user edit restarts the task. Failed
+                    // drafts wait for a new edit or explicit refresh.
+                    return
                 }
                 self.levelsReadRequested = false
                 self.levelsBusy = true
+                let revisions = self.levelQueue.revisions
                 let body: [String: Any]? = kind.flatMap { key in edit.map { ["kind": key, "db": $0.db, "muted": $0.muted] } }
                 do {
-                    let result = try await self.api(edit == nil ? "/audio/levels" : "/audio/level", post: edit != nil, body: body)
+                    var result = try await self.api(edit == nil ? "/audio/levels" : "/audio/level", post: edit != nil, body: body)
+                    // Pi's route reconciliation can briefly own the audio
+                    // lock. Retain the draft while retrying this exact edit.
+                    for _ in 0..<2 where result["error"] as? String == "audio_busy" {
+                        try await Task.sleep(nanoseconds: 200_000_000)
+                        if let kind, let edit, self.levelQueue.pending[kind] != edit { break }
+                        result = try await self.api(edit == nil ? "/audio/levels" : "/audio/level", post: edit != nil, body: body)
+                    }
                     try Task.checkCancellation()
+                    try self.receiveLevels(result, revisions: revisions)
                     if let kind, let edit { self.levelQueue.acknowledge(kind, edit: edit) }
-                    try self.receiveLevels(result)
                 } catch {
                     guard !Task.isCancelled else { return }
-                    if let kind, let edit { self.levelQueue.acknowledge(kind, edit: edit) }
+                    // A failed write is not an acknowledgement: keep the
+                    // user's position instead of snapping to the old value.
+                    if let kind, let edit { self.levelQueue.fail(kind, edit: edit) }
+                    let recoveryRevisions = self.levelQueue.revisions
                     if let current = try? await self.api("/audio/levels"), current["ok"] as? Bool == true {
                         guard !Task.isCancelled else { return }
-                        try? self.receiveLevels(current)
+                        try? self.receiveLevels(current, revisions: recoveryRevisions)
                     } else {
                         guard !Task.isCancelled else { return }
-                        self.speakerLevelAvailable = false; self.microphoneLevelAvailable = false
+                        if !self.levelQueue.protects("output") { self.speakerLevelAvailable = false }
+                        if !self.levelQueue.protects("input") { self.microphoneLevelAvailable = false }
                     }
+                    self.levelsStatus = "Не вдалося оновити гучність. Натисни оновлення звуку."
+                }
+                if !self.levelQueue.failed.isEmpty {
                     self.levelsStatus = "Не вдалося оновити гучність. Натисни оновлення звуку."
                 }
                 self.levelsBusy = false
             }
         }
     }
-    func applyAudio() {
+    // Only Picker setters call these methods. Device discovery and route
+    // changes may update published IDs without applying either system default.
+    func selectOutput(_ id: UInt32) {
+        guard !audioBusy, !busy, !preparing, id != output else { return }
+        if id == 0 { output = 0; return }
+        applyAudio(selectedInput: nil, selectedOutput: id)
+    }
+    func selectInput(_ id: UInt32) {
+        guard !audioBusy, !busy, !preparing, id != input else { return }
+        if id == 0 { input = 0; return }
+        // Changing a Bluetooth input can recreate its speaker endpoint. Keep
+        // the current output by UID instead of reapplying an old Picker value.
+        applyAudio(selectedInput: id, selectedOutput: SoundDevices.defaultDevice(input: false))
+    }
+    private func applyAudio(selectedInput: UInt32?, selectedOutput: UInt32?) {
         guard !audioBusy, !busy, !preparing else { return }
-        let selectedInput = input, selectedOutput = output
         let initial = SoundDevices.list()
         // Validate both selections before touching either system default.
         do {
-            try AudioInputGuard.validateSelection(selectedInput, devices: initial, address: snailAudioAddress, callReady: callMicrophoneArmed)
-            if selectedOutput != 0 && !initial.contains(where: { $0.id == selectedOutput && $0.output && !$0.uid.isEmpty }) {
+            if let selectedInput {
+                try AudioInputGuard.validateSelection(selectedInput, devices: initial, address: snailAudioAddress, callReady: callMicrophoneArmed)
+            }
+            if let selectedOutput, !initial.contains(where: { $0.id == selectedOutput && $0.output && !$0.uid.isEmpty }) {
                 throw DemoError("Аудіопристрій уже від’єднано. Онови список.")
             }
         } catch { self.error = error.localizedDescription; return }
@@ -1037,16 +1089,14 @@ final class Controller: NSObject, ObservableObject, @preconcurrency NetServiceBr
         audioBusy = true
         audioTask = Task { [weak self] in
             guard let self else { return }
-            defer { if !Task.isCancelled { self.audioBusy = false; self.refreshAudio() } }
+            defer { if !Task.isCancelled { self.audioBusy = false; self.refreshAudio(); self.startLevelSync() } }
             do {
                 var inputChanged = false
-                var restoredMacMicrophone = false
-                if selectedInput != 0 {
+                if let selectedInput {
                     try AudioInputGuard.validateSelection(selectedInput, devices: SoundDevices.list(), address: self.snailAudioAddress, callReady: self.callMicrophoneArmed)
                     inputChanged = SoundDevices.defaultDevice(input: true) != selectedInput
                     try SoundDevices.setDefault(selectedInput, input: true)
-                } else if !self.callMicrophoneArmed, let microphone = try AudioInputGuard.restoreBuiltInIfNeeded(address: self.snailAudioAddress) {
-                    self.input = microphone.id; inputChanged = true; restoredMacMicrophone = true
+                    self.input = selectedInput
                 }
                 if inputChanged { try await Task.sleep(nanoseconds: 400_000_000) }
                 if let outputUID {
@@ -1066,7 +1116,6 @@ final class Controller: NSObject, ObservableObject, @preconcurrency NetServiceBr
                     guard chosen else { throw DemoError("Аудіопристрій уже від’єднано. Онови список.") }
                 }
                 self.detail = "Системні аудіопристрої вибрано. У Meet обери їх або «За замовчуванням»."
-                if restoredMacMicrophone { self.detail = "Для дзвінків вибрано мікрофон Mac. У Meet обери його або «За замовчуванням»." }
             } catch {
                 guard !Task.isCancelled else { return }
                 self.error = error.localizedDescription

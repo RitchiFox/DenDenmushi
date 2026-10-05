@@ -16,6 +16,7 @@ struct ServoChannel: Identifiable {
 final class ServoModel: ObservableObject {
     @Published private(set) var connected = false
     @Published private(set) var busy = false
+    @Published private(set) var commandChannels: Set<Int> = []
     @Published private(set) var stopping = false
     @Published private(set) var needsUpdate = false
     @Published private(set) var firstManual = false
@@ -32,16 +33,32 @@ final class ServoModel: ObservableObject {
     @Published var error: String?
     private var tunnel: Process?
     private var poll: Task<Void, Never>?
+    private var pollID = UUID()
     private var command: Task<Void, Never>?
+    private var stopCommand: Task<Void, Never>?
+    private var disconnectTask: Task<Void, Never>?
+    private var channelCommands: [Int: Task<Void, Never>] = [:]
+    private var channelRevisions = [0, 0, 0]
     private var generation = UUID()
     private var ownsHold = false
     private var lastKeepalive = Date.distantPast
-    private var pendingMoves: [Int: (angle: Double, hold: Bool)] = [:]
-    private var inFlightMoveChannel: Int?
-    private var moveSender: Task<Void, Never>?
-    private var moveSenderID = UUID()
+    private let requestOverride: ((String, [String: Any]?) async throws -> [String: Any])?
+
+    init(request: ((String, [String: Any]?) async throws -> [String: Any])? = nil) {
+        requestOverride = request
+    }
+
+    #if SERVO_MODEL_TESTS
+    convenience init(state: [String: Any], request: @escaping (String, [String: Any]?) async throws -> [String: Any]) throws {
+        self.init(request: request)
+        supportsSlowProbe = true
+        try apply(state)
+        connected = true
+    }
+    #endif
 
     private func api(_ path: String, body: [String: Any]? = nil) async throws -> [String: Any] {
+        if let requestOverride { return try await requestOverride(path, body) }
         var request = URLRequest(url: URL(string: "http://127.0.0.1:18790" + path)!)
         request.timeoutInterval = 3
         request.setValue("desktop-v1", forHTTPHeaderField: "X-DenDen-Client")
@@ -58,7 +75,7 @@ final class ServoModel: ObservableObject {
         return result
     }
 
-    private func apply(_ state: [String: Any]) throws {
+    private func apply(_ state: [String: Any], only selectedChannels: Set<Int> = [1, 2, 3]) throws {
         guard state["ok"] as? Bool == true,
               let values = state["channels"] as? [[String: Any]], values.count == 3 else {
             throw DemoError("Керування сервами на Pi недоступне. Перевір живлення Pi та оновлення сервісу.")
@@ -71,6 +88,7 @@ final class ServoModel: ObservableObject {
         firstSmooth = state["firstSmooth"] as? Bool == true
         var updated = channels
         for index in updated.indices {
+            guard selectedChannels.contains(updated[index].id) else { continue }
             guard values[index]["channel"] as? Int == updated[index].id,
                   values[index]["pin"] as? Int == updated[index].pin,
                   let active = values[index]["active"] as? Bool else {
@@ -103,7 +121,7 @@ final class ServoModel: ObservableObject {
     }
 
     func connect(host: String, user: String) {
-        guard !busy, !stopping, !connected else { return }
+        guard !busy, !stopping, !connected, disconnectTask == nil else { return }
         busy = true; error = nil; needsUpdate = false; supportsSlowProbe = false
         message = "Підключаю керування сервами…"
         let attempt = UUID(); generation = attempt
@@ -154,7 +172,9 @@ final class ServoModel: ObservableObject {
                 supportsSlowProbe = features.contains("servos-sweep-v1")
                 needsUpdate = !supportsSlowProbe
                 // Connecting only reads status; it never sends a position.
-                try apply(try await api("/servos/status"))
+                let state = try await api("/servos/status")
+                guard generation == attempt else { return }
+                try apply(state)
                 needsUpdate = !firstManual || !firstSmooth || !secondManual || !secondSlider || !secondSmooth || !thirdCalibration
                 connected = true; busy = false
                 message = "Керування готове."
@@ -171,23 +191,40 @@ final class ServoModel: ObservableObject {
 
     private func startPolling() {
         poll?.cancel()
+        let session = generation
+        let identifier = UUID(); pollID = identifier
         poll = Task { [weak self] in
             while !Task.isCancelled {
-                try? await Task.sleep(nanoseconds: 1_000_000_000)
-                guard let self, !Task.isCancelled, self.connected else { return }
-                // Skip reads during a write so an old status cannot replace
-                // the command's newer result in the UI.
+                guard let self else { return }
+                // The Pi still executes each 0.5-second trajectory. Read its
+                // completion promptly, without locking the other channels.
+                let interval: UInt64 = self.slowProbeRunning || !self.commandChannels.isEmpty ? 100_000_000 : 1_000_000_000
+                do { try await Task.sleep(nanoseconds: interval) }
+                catch { return }
+                guard !Task.isCancelled, self.connected, self.generation == session,
+                      self.pollID == identifier else { return }
                 if self.busy || self.stopping { continue }
+                let revisions = self.channelRevisions
+                let pendingAtRequest = self.commandChannels
                 do {
-                    if self.ownsHold {
-                        try self.apply(try await self.api("/servos/command", body: ["action": "keepalive", "lease": self.generation.uuidString.lowercased()]))
+                    let state: [String: Any]
+                    if self.ownsHold && Date().timeIntervalSince(self.lastKeepalive) >= 1 {
+                        state = try await self.api("/servos/command", body: ["action": "keepalive", "lease": session.uuidString.lowercased()])
                         self.lastKeepalive = Date()
                     } else {
-                        try self.apply(try await self.api("/servos/status"))
+                        state = try await self.api("/servos/status")
                     }
-                }
-                catch {
-                    if Task.isCancelled { return }
+                    guard !Task.isCancelled, self.generation == session, self.pollID == identifier,
+                          !self.stopping else { return }
+                    // A request started before a click must never replace its
+                    // newer command response, even if it arrives last.
+                    let unchanged = Set((1...3).filter {
+                        revisions[$0 - 1] == self.channelRevisions[$0 - 1] &&
+                        !pendingAtRequest.contains($0) && !self.commandChannels.contains($0)
+                    })
+                    try self.apply(state, only: unchanged)
+                } catch {
+                    guard !Task.isCancelled, self.generation == session, self.pollID == identifier else { return }
                     self.error = error.localizedDescription
                     self.message = "З’єднання із сервами втрачено. Імпульси вимкнуться на Pi автоматично."
                     self.closeTunnel()
@@ -197,60 +234,34 @@ final class ServoModel: ObservableObject {
         }
     }
 
-    func move(channel: Int, angle: Double, hold: Bool) {
-        guard let wireAngle = ServoAngleScale.wireAngle(channel: channel, angle: angle) else { return }
-        var body: [String: Any] = ["action": "move", "channel": channel, "angle": wireAngle]
-        if channel == 1 { body["wide"] = true }
-        if hold { body["lease"] = generation.uuidString.lowercased() }
-        send(body)
-    }
-
-    func queueMove(channel: Int, angle: Double, hold: Bool) {
-        guard connected, !stopping, ServoAngleScale.wireAngle(channel: channel, angle: angle) != nil else { return }
-        pendingMoves[channel] = (angle, hold)
-        guard moveSender == nil else { return }
-        let sender = UUID(); moveSenderID = sender
-        moveSender = Task {
-            defer { if moveSenderID == sender { moveSender = nil } }
-            while !Task.isCancelled && connected && !stopping {
-                if busy {
-                    await command?.value
-                    if busy { try? await Task.sleep(nanoseconds: 20_000_000) }
-                    continue
-                }
-                guard let channel = pendingMoves.keys.sorted().first,
-                      let target = pendingMoves.removeValue(forKey: channel) else { return }
-                move(channel: channel, angle: target.angle, hold: target.hold)
-                await command?.value
-                try? await Task.sleep(nanoseconds: 100_000_000)
-            }
-        }
-    }
-
     func hasPendingMove(channel: Int) -> Bool {
-        pendingMoves[channel] != nil || inFlightMoveChannel == channel
+        commandChannels.contains(channel)
+    }
+
+    func isBusy(channel: Int) -> Bool {
+        busy || stopping || disconnectTask != nil || commandChannels.contains(channel) || channels.first { $0.id == channel }?.moving == true
     }
 
     func confirmFirstPose(angle: Double) {
-        guard connected, firstManual, !busy, !stopping,
+        guard connected, firstManual, !isBusy(channel: 1),
               channels[0].pulseWidthMicros == 0, angle.isFinite, (12.3...45.5).contains(angle) else { return }
         send(["action": "arm_first", "angle": angle])
     }
 
     func stepFirst(_ delta: Int) {
-        guard connected, firstManual, !busy, !stopping, [-1, 1].contains(delta),
+        guard connected, firstManual, !isBusy(channel: 1), [-1, 1].contains(delta),
               let pulse = channels[0].pulseWidthMicros,
               (637...1005).contains(pulse), (delta < 0 ? pulse > 637 : pulse < 1005) else { return }
         smoothFirst(start: nil, end: max(12.3, min(45.5, Double(pulse + 11 * delta - 500) * 90 / 1000)))
     }
 
     func confirmThirdPose(angle: Double) {
-        guard connected, thirdCalibration, !busy, !stopping, channels[2].pulseWidthMicros == 0,
+        guard connected, thirdCalibration, !isBusy(channel: 3), channels[2].pulseWidthMicros == 0,
               angle.isFinite, (30...60).contains(angle) else { return }
         send(["action": "arm_third", "angle": angle])
     }
     func moveThird(_ angle: Double) {
-        guard connected, thirdCalibration, !busy, !stopping, !slowProbeRunning,
+        guard connected, thirdCalibration, !isBusy(channel: 3),
               angle.isFinite, (30...60).contains(angle),
               let pulse = channels[2].pulseWidthMicros, (833...1167).contains(pulse) else { return }
         send(["action": "smooth_third", "expectedPulse": pulse,
@@ -259,18 +270,18 @@ final class ServoModel: ObservableObject {
     }
 
     func confirmSecondPose(angle: Double) {
-        guard connected, secondManual, !busy, !stopping, channels[1].pulseWidthMicros == 0,
+        guard connected, secondManual, !isBusy(channel: 2), channels[1].pulseWidthMicros == 0,
               angle.isFinite, (3...33).contains(angle) else { return }
         send(["action": "arm_second", "angle": angle])
     }
     func moveSecond(_ angle: Double) {
-        guard connected, secondSlider, !busy, !stopping, angle.isFinite, (3...33).contains(angle),
+        guard connected, secondSlider, !isBusy(channel: 2), angle.isFinite, (3...33).contains(angle),
               let pulse = channels[1].pulseWidthMicros, (533...867).contains(pulse) else { return }
         send(["action": "move_second", "angle": angle, "expectedPulse": pulse])
     }
 
     func smoothSecond(start: Double?, end: Double) {
-        guard connected, secondSmooth, !busy, !stopping, !slowProbeRunning,
+        guard connected, secondSmooth, !isBusy(channel: 2),
               let pulse = channels[1].pulseWidthMicros, (533...867).contains(pulse),
               let current = channels[1].angle else { return }
         let from = start ?? current
@@ -281,14 +292,14 @@ final class ServoModel: ObservableObject {
     }
 
     func stepSecond(_ delta: Int) {
-        guard connected, secondManual, !busy, !stopping, [-1, 1].contains(delta),
+        guard connected, secondManual, !isBusy(channel: 2), [-1, 1].contains(delta),
               let pulse = channels[1].pulseWidthMicros, (533...867).contains(pulse),
               (delta < 0 ? pulse > 533 : pulse < 867) else { return }
         smoothSecond(start: nil, end: max(3, min(33, Double(pulse + 11 * delta - 500) * 180 / 2000)))
     }
 
     func smoothFirst(start: Double?, end: Double) {
-        guard connected, firstSmooth, !busy, !stopping, !slowProbeRunning,
+        guard connected, firstSmooth, !isBusy(channel: 1),
               let pulse = channels[0].pulseWidthMicros, (637...1005).contains(pulse),
               let current = channels[0].angle else { return }
         let from = start ?? current
@@ -299,68 +310,52 @@ final class ServoModel: ObservableObject {
               "lease": generation.uuidString.lowercased()])
     }
 
-    private func cancelPendingMoves() {
-        moveSenderID = UUID()
-        moveSender?.cancel(); moveSender = nil
-        pendingMoves.removeAll()
-    }
-
     func release(channel: Int) {
         guard (1...3).contains(channel) else { return }
         stop(body: ["action": "release", "channel": channel])
     }
+
     private func send(_ body: [String: Any]) {
-        guard connected, !busy, !stopping else { return }
-        busy = true; error = nil
-        let action = body["action"] as? String
-        inFlightMoveChannel = (action == "move_third" || action == "smooth_third") ? 3 : (action == "step_second" || action == "move_second" || action == "smooth_second") ? 2 : (action == "step_first" || action == "smooth_first") ? 1 : ((action == "move" || action == "sweep") ? body["channel"] as? Int : nil)
-        // Join the current status request before a write; this also avoids
-        // displaying stale active/idle state after a command completes.
-        let previousPoll = poll; previousPoll?.cancel(); poll = nil
-        command = Task {
-            defer { inFlightMoveChannel = nil }
-            await previousPoll?.value
-            do {
-                let result = try await api("/servos/command", body: body)
-                let rejection = result["error"] as? String
-                if result["ok"] as? Bool == false, (rejection?.hasPrefix("first_servo_") == true || rejection?.hasPrefix("second_servo_") == true || rejection?.hasPrefix("third_servo_") == true) {
-                    self.error = "Крок не виконано. Перевір поточне положення та межі серви."
-                    try apply(try await api("/servos/status"))
-                } else if action == "sweep", result["ok"] as? Bool == false,
-                   rejection == "invalid_start_pulse" || rejection == "sweep_requires_kernel_pwm" {
-                    // A service restart can invalidate cached starting metadata.
-                    // A rejected probe neither grants ownership nor initializes
-                    // a position; keep the connection available for manual setup.
-                    if rejection == "invalid_start_pulse" {
-                        self.error = "Спочатку задай першій серві початкове положення повзунком у вибраному розмаху."
-                    } else {
-                        supportsSlowProbe = false
-                        needsUpdate = true
-                        self.error = "Для плавного руху на Raspberry Pi онови сервіс у налаштуваннях."
-                    }
-                } else {
-                    // Record ownership only after this command was acknowledged.
-                    // An older status request must not clear a newer hold intent.
-                    if (action == "move" || action == "sweep" || action == "smooth_first" || action == "smooth_second" || action == "smooth_third"),
-                       body["lease"] as? String == generation.uuidString.lowercased() {
-                        ownsHold = true
-                    }
-                    try apply(result)
-                    // A long slider drag must not starve another channel's hold
-                    // or autonomous trajectory.
-                    if ownsHold && Date().timeIntervalSince(lastKeepalive) >= 1 {
-                        try apply(try await api("/servos/command", body: ["action": "keepalive", "lease": generation.uuidString.lowercased()]))
-                        lastKeepalive = Date()
-                    }
+        guard let action = body["action"] as? String else { return }
+        let channel = action.hasSuffix("_first") ? 1 : action.hasSuffix("_second") ? 2 : action.hasSuffix("_third") ? 3 : nil
+        guard let channel, connected, !isBusy(channel: channel) else { return }
+        error = nil
+        commandChannels.insert(channel)
+        channelRevisions[channel - 1] += 1
+        let revision = channelRevisions[channel - 1]
+        let session = generation
+        // Each response acknowledges only its own channel. A complete Pi
+        // snapshot from the other eye may already be older than this command.
+        channelCommands[channel] = Task {
+            defer {
+                if generation == session, channelRevisions[channel - 1] == revision {
+                    channelCommands[channel] = nil
+                    commandChannels.remove(channel)
                 }
             }
-            catch {
+            do {
+                let result = try await api("/servos/command", body: body)
+                guard generation == session else { return }
+                let rejection = result["error"] as? String
+                if result["ok"] as? Bool == false,
+                   rejection?.hasPrefix("first_servo_") == true || rejection?.hasPrefix("second_servo_") == true || rejection?.hasPrefix("third_servo_") == true {
+                    self.error = "Крок не виконано. Перевір поточне положення та межі серви."
+                    let state = try await api("/servos/status")
+                    guard generation == session else { return }
+                    try apply(state, only: [channel])
+                } else {
+                    if action.hasPrefix("smooth_"), body["lease"] as? String == session.uuidString.lowercased() {
+                        ownsHold = true
+                    }
+                    try apply(result, only: [channel])
+                }
+            } catch {
+                guard generation == session else { return }
                 self.error = error.localizedDescription
                 closeTunnel()
             }
-            busy = false
-            if connected && !stopping { startPolling() }
         }
+        startPolling()
     }
 
     func stopAll() {
@@ -369,37 +364,60 @@ final class ServoModel: ObservableObject {
     private func stop(body: [String: Any]) {
         guard connected, !stopping else { return }
         stopping = true
-        cancelPendingMoves()
         let previousPoll = poll; previousPoll?.cancel(); poll = nil
-        Task {
+        let previousCommands = Array(channelCommands.values)
+        let session = generation
+        stopCommand = Task {
+            defer { if generation == session { stopCommand = nil } }
             // Complete any earlier move request before sending stop so a
             // delayed in-flight move cannot arrive after the stop request.
-            await command?.value
+            for request in previousCommands { await request.value }
             await previousPoll?.value
-            do { try apply(try await api("/servos/command", body: body)) }
+            guard generation == session, connected else { return }
+            do {
+                let state = try await api("/servos/command", body: body)
+                guard generation == session else { return }
+                try apply(state)
+            }
             catch {
+                guard generation == session else { return }
                 self.error = error.localizedDescription
                 closeTunnel()
+                return
             }
+            // Disconnect owns the barrier until its final stop is acknowledged
+            // and the tunnel is closed. This earlier stop must not reopen UI.
+            guard disconnectTask == nil else { return }
             stopping = false
             if connected { startPolling() }
         }
     }
 
     func disconnect() async {
+        if let disconnectTask { await disconnectTask.value; return }
         stopping = true
-        cancelPendingMoves()
         poll?.cancel(); poll = nil
-        await command?.value
-        if connected { _ = try? await api("/servos/command", body: ["action": "stop"]) }
-        generation = UUID()
-        closeTunnel(); busy = false; stopping = false
-        message = "Серви підключаються разом із равликом."
+        let previousStop = stopCommand
+        let task = Task {
+            defer { disconnectTask = nil }
+            await command?.value
+            await previousStop?.value
+            for request in Array(channelCommands.values) { await request.value }
+            if connected { _ = try? await api("/servos/command", body: ["action": "stop"]) }
+            closeTunnel(); busy = false; stopping = false
+            message = "Серви підключаються разом із равликом."
+        }
+        disconnectTask = task
+        await task.value
     }
     private func closeTunnel() {
-        cancelPendingMoves()
+        generation = UUID()
+        poll?.cancel(); poll = nil
+        stopCommand?.cancel(); stopCommand = nil
+        channelCommands.values.forEach { $0.cancel() }
+        channelCommands.removeAll(); commandChannels.removeAll()
         if tunnel?.isRunning == true { tunnel?.terminate() }
-        tunnel = nil; connected = false
+        tunnel = nil; connected = false; busy = false; stopping = false
         supportsSlowProbe = false
         slowProbeRunning = false
         slowProbePreparing = false
@@ -448,8 +466,7 @@ struct CameraTiltControl: View {
     private var channel: ServoChannel? { model.channels.first { $0.id == 3 } }
     private var known: Bool { (channel?.pulseWidthMicros ?? 0) > 0 }
     private func sync() {
-        guard !dragging, !model.busy, !model.stopping,
-              channel?.moving != true, !model.hasPendingMove(channel: 3),
+        guard !dragging, !model.isBusy(channel: 3),
               let current = channel?.angle, current.isFinite,
               (30...60).contains(current) else { return }
         // Keep the selected target steady through PWM rounding and progress updates.
@@ -457,16 +474,13 @@ struct CameraTiltControl: View {
     }
     var body: some View {
         VStack(spacing: 4) {
-            Slider(value: $angle, in: 30...60, step: 0.1, onEditingChanged: { editing in
+            CameraTiltSlider(value: $angle, enabled: model.connected && model.thirdCalibration && known && !model.isBusy(channel: 3), onEditingChanged: { editing in
                 dragging = editing
                 if !editing { model.moveThird(angle) }
             })
-            .frame(width: 210)
-            .rotationEffect(.degrees(90))
             .frame(width: 28, height: 218)
             .accessibilityLabel(L("Поворот камери"))
             .help(L("Поворот камери"))
-            .disabled(!model.connected || !model.thirdCalibration || !known || model.busy || model.stopping || model.slowProbeRunning)
             if model.connected && !known {
                 Button { showReference = true } label: { Image(systemName: "exclamationmark.circle") }
                     .accessibilityLabel(L("Підтвердити положення — без руху"))
@@ -478,9 +492,56 @@ struct CameraTiltControl: View {
         .frame(width: 32)
         .onAppear { sync() }
         .onChange(of: channel?.pulseWidthMicros) { _, _ in sync() }
-        .onChange(of: model.busy) { _, busy in if !busy { sync() } }
-        .onChange(of: channel?.moving) { _, moving in if moving != true { sync() } }
+        .onChange(of: model.isBusy(channel: 3)) { _, busy in if !busy { sync() } }
         .onChange(of: known) { _, value in if value { showReference = false } }
+    }
+}
+
+// NSSlider tracks vertical pointer coordinates directly. Rotating a horizontal
+// SwiftUI Slider also rotates its drawing, but can leave native tracking/layout
+// out of step with the pointer when the surrounding view updates.
+private struct CameraTiltSlider: NSViewRepresentable {
+    @Binding var value: Double
+    let enabled: Bool
+    var onEditingChanged: (Bool) -> Void
+
+    func makeCoordinator() -> Coordinator { Coordinator(self) }
+    func makeNSView(context: Context) -> TrackingSlider {
+        let slider = TrackingSlider(frame: NSRect(x: 0, y: 0, width: 28, height: 218))
+        slider.isVertical = true
+        slider.minValue = 30; slider.maxValue = 60
+        slider.isContinuous = true
+        slider.target = context.coordinator
+        slider.action = #selector(Coordinator.changed(_:))
+        slider.onEditingChanged = { context.coordinator.parent.onEditingChanged($0) }
+        return slider
+    }
+    func updateNSView(_ slider: TrackingSlider, context: Context) {
+        context.coordinator.parent = self
+        slider.isEnabled = enabled
+        slider.setAccessibilityLabel(L("Поворот камери"))
+        if !slider.tracking { slider.doubleValue = 90 - value }
+    }
+    final class Coordinator: NSObject {
+        var parent: CameraTiltSlider
+        init(_ parent: CameraTiltSlider) { self.parent = parent }
+        @objc func changed(_ slider: TrackingSlider) {
+            // Preserve the existing direction: 30° at the top, 60° below.
+            parent.value = ((90 - slider.doubleValue) * 10).rounded() / 10
+            // Keyboard/accessibility adjustments have no mouse tracking phase.
+            if !slider.tracking { parent.onEditingChanged(false) }
+        }
+    }
+    final class TrackingSlider: NSSlider {
+        var tracking = false
+        var onEditingChanged: ((Bool) -> Void)?
+        override func mouseDown(with event: NSEvent) {
+            tracking = true
+            onEditingChanged?(true)
+            super.mouseDown(with: event)
+            tracking = false
+            onEditingChanged?(false)
+        }
     }
 }
 
@@ -499,28 +560,13 @@ private struct ServoRow: View {
     @State private var angle = 90.0
     @State private var thirdReference = 45.0
     @State private var thirdDragging = false
-    @AppStorage private var hold: Bool
-
-    init(model: ServoModel, channel: ServoChannel) {
-        self.model = model
-        self.channel = channel
-        // Persist preferences only. A saved preference must never replay a move.
-        _hold = AppStorage(wrappedValue: false, "servoHoldAfterMove.\(channel.id)")
-    }
-
-    private var angleControl: Binding<Double> {
-        Binding(get: { angle }, set: { value in
-            angle = value
-            model.queueMove(channel: channel.id, angle: value, hold: hold)
-        })
-    }
 
     private func syncCommandedAngle() {
         // Status is the last commanded angle, not a measured shaft position.
         // Assigning local state bypasses the control binding and cannot actuate.
-        guard !thirdDragging, !model.hasPendingMove(channel: channel.id),
+        guard !thirdDragging, !model.isBusy(channel: channel.id),
               let value = channel.angle, value.isFinite, ServoAngleScale.range(channel: channel.id).contains(value) else { return }
-        angle = value
+        if abs(angle - value) > 0.1 { angle = value }
     }
     // Endpoint meanings confirmed by the user for each installed mechanism.
     private func eyeAngle(open: Bool) -> Double {
@@ -548,7 +594,7 @@ private struct ServoRow: View {
         .accessibilityLabel(L(open ? "Відкрити" : "Закрити"))
         .frame(maxWidth: .infinity)
     }
-    private var disabled: Bool { !model.connected || model.busy || model.stopping || model.slowProbeRunning }
+    private var disabled: Bool { !model.connected || model.isBusy(channel: channel.id) }
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
@@ -612,7 +658,7 @@ private struct ServoRow: View {
         }.padding(14).background(.quaternary.opacity(0.45), in: RoundedRectangle(cornerRadius: 12))
             .onAppear { syncCommandedAngle() }
             .onChange(of: channel.angle) { _, _ in syncCommandedAngle() }
-            .onChange(of: model.busy) { _, busy in
+            .onChange(of: model.isBusy(channel: channel.id)) { _, busy in
                 if !busy { syncCommandedAngle() }
             }
             .onChange(of: model.stopping) { _, stopping in

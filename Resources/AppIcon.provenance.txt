@@ -1,0 +1,18 @@
+DenDenMushi app icon
+
+Source: screenshot supplied by the project owner on 2026-10-05.
+Edit: OpenAI built-in image generation tool; precise-object-edit mode.
+The screenshot camera badge and dimensions label were removed, preserving the
+sleepy-eyed character, smile, spotted hat, original colors and cel-shaded style.
+The artwork was placed in a rounded square with a transparent outer margin.
+
+Prompt: Create a square macOS app icon from the supplied close-up. Preserve the
+character's pale yellow-green face, sleepy gray eyes, smiling mouth and teeth,
+white fluffy cap with dark brown spots, blue areas, proportions, framing and
+flat cel shading. Remove the screenshot's lower-left camera badge and lower-right
+dimensions label, reconstructing the artwork behind them. Use rounded corners
+and genuine transparent alpha outside the artwork. No added text, logos, UI,
+objects, glass effects or 3D treatment.
+
+AppIcon.png is the 1024 x 1024 source. Regenerate the macOS multi-resolution
+AppIcon.icns with: bash scripts/build-app-icon.sh

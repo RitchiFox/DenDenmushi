@@ -173,7 +173,7 @@ enum Bootstrap {
         guard remote.range(of: "\\A/tmp/denden-setup\\.[A-Za-z0-9]{8}\\z", options: .regularExpression) != nil else { throw DemoError("Pi не створив папку інсталятора.") }
         defer { _ = try? run("/usr/bin/ssh", options + ["-T", target, "rm -rf -- " + ConnectionRules.shellQuote(remote)], env: env, timeout: 15) }
         progress("Передаю налаштування на Pi…")
-        let files = ["pairing.py", "device_history.py", "waiting.py", "waiting.wav", "wifi_audio.py", "server.py", "audio.py", "quiet.py", "bluetooth_diagnostics.py", "bluetooth_sco.py", "servos.py", "servo_pwm.py", "servo_pwm_setup.py", "install_files.py", "provision.py", "provision_core.py", "provision_backend.py", "provision_admin.py", "install.sh"].map { resources.appendingPathComponent("pi/" + $0).path }
+        let files = ["pairing.py", "device_history.py", "waiting.py", "waiting.wav", "wifi_audio.py", "server.py", "audio.py", "audio_admin.py", "quiet.py", "bluetooth_diagnostics.py", "bluetooth_sco.py", "servos.py", "servo_pwm.py", "servo_pwm_setup.py", "install_files.py", "provision.py", "provision_core.py", "provision_backend.py", "provision_admin.py", "install.sh"].map { resources.appendingPathComponent("pi/" + $0).path }
         _ = try run("/usr/bin/scp", options + files + [helper.directory.appendingPathComponent("public_key").path, target + ":" + remote + "/"], env: env)
         progress("Готую камеру й Bluetooth. Це може тривати кілька хвилин…")
         let command = "cd " + ConnectionRules.shellQuote(remote) + " && sudo -S -p '' /bin/bash install.sh"

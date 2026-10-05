@@ -14,8 +14,10 @@ the snail’s connection code and which Wi-Fi network to use.
   OBS provides the virtual camera used by video-call apps.
 - A powered-on, prepared snail and access to the same local network.
 
-The app currently ships as source code. There is no ready-made notarized
-installer yet. The Mac app and audio package have built successfully locally
+The app currently ships as source code. With the recommended agent-assisted
+installation below, the agent builds it for you and installs a normal app in
+Applications. You launch it by clicking its icon; everyday use does not need
+Terminal. There is no ready-made notarized installer yet. The Mac app and audio package have built successfully locally
 and on GitHub’s macOS runner. A complete first installation and call on another
 user’s Mac have not yet been verified.
 
@@ -25,9 +27,12 @@ Open this repository folder in your local coding agent and send this request:
 
 > Install the DenDenMushi desktop app on my Mac using AGENTS.md and
 > docs/INSTALL.md. The snail is already configured. Check existing dependencies,
-> install missing Mac components within the setup request, and build the app.
-> Do the available steps automatically and explain which macOS prompts I need
-> to complete. Do not reinstall Raspberry Pi services, move servos, or run
+> install missing Mac components within the setup request, build the app, and
+> install DenDenMushi.app in Applications. Open and verify the installed copy.
+> Complete the Wi-Fi audio setup through its native installer so both microphone
+> and speakers appear. Perform the build and installation work yourself; do not
+> ask me to type Terminal commands. Explain which macOS prompts I need to
+> complete. Do not reinstall Raspberry Pi services, move servos, or run
 > audio tests without my request.
 
 If you do not have the files yet, ask the agent to clone
@@ -36,6 +41,10 @@ Codex uses `AGENTS.md`; Claude Code uses `CLAUDE.md`, which points to the same
 instructions. The agent needs terminal access on your Mac. A chat without
 local tools can guide you but cannot install the app for you.
 
+When finished, open **Finder → Applications → DenDenMushi**, or search for
+DenDenMushi in Spotlight. If the agent used your personal Applications folder,
+it will give you that location. The repository and Terminal can remain closed.
+
 | The agent can do | You need to do |
 | --- | --- |
 | Check macOS, developer tools, Python and OBS | Complete Apple installer and permission dialogs |
@@ -43,7 +52,10 @@ local tools can guide you but cannot install the app for you.
 | Install authorized Mac dependencies and check the build | Enter the snail’s code in the app |
 | Check connection status and explain errors | Select call devices and confirm sound quality when convenient |
 
-## Option B: install manually
+## Option B: manual source build (optional, for experienced users)
+
+Skip this section when an agent is installing the app for you. It describes
+developer commands, not steps every user needs to perform.
 
 ### 1. Prepare your Mac
 
@@ -120,9 +132,10 @@ To keep the app in Applications, first choose **Quit DenDenMushi**, then move
 `build/DenDenMushi.app` there in Finder and open the moved copy. Do not run two
 copies at once. Leave macOS security protections enabled.
 
-### 4. Select English
+### 4. App language
 
-If the app opens in Ukrainian, select the **Налаштування** tab (Settings),
+New installations start in English. Existing language preferences are kept.
+If an older installation opens in Ukrainian, select the **Налаштування** tab (Settings),
 then **Мова програми** (App language), and choose **English**. Labels below
 refer to the English interface. The language choice is remembered on this Mac.
 
@@ -165,7 +178,8 @@ snail. Do not reinstall device services just to join as a guest.
 
 ### 6. Set up Wi-Fi audio and your call
 
-1. Open **Settings → Audio transport** and select **Wi-Fi**.
+1. Open **Settings → Audio transport** and select **Wi-Fi**. This is the default
+   for a new installation; existing transport preferences are kept.
 2. If offered, click **Install Wi-Fi audio devices on Mac**. macOS may request
    your **Mac administrator password**. This restarts system audio and briefly
    interrupts other sound on your Mac, so install outside a call.
@@ -179,8 +193,20 @@ snail. Do not reinstall device services just to join as a guest.
    | Microphone | **DenDenMushi Wi-Fi Microphone** |
    | Speakers | **DenDenMushi Wi-Fi Speakers** |
 
-5. Start with modest speaker volume and microphone gain around 0 dB. When it
-   is convenient to make sound, try a short call. Residual echo is still possible.
+5. When it is convenient to make sound, try a short call. Residual echo is still
+   possible. The device owner can adjust speaker volume and microphone gain
+   under **Settings → Superadmin audio settings**, after connecting and entering
+   their separate superadmin code. Guests do not need this code for normal use.
+
+The speaker and microphone pickers apply your choice immediately; there is no
+separate Apply button. These pickers change the Mac's default audio devices.
+Your call app may keep its own explicit device selection, so check the device
+lists above in Meet or Telegram too.
+
+The superadmin code is configured privately on the snail. It is not included
+in this repository and is separate from the connection code. Access expires
+after ten minutes or when this Mac disconnects; gain controls stay hidden until
+unlocked again.
 
 An optional permission to determine the Mac’s Wi-Fi network may be requested
 for network-following features. It is separate from the microphone permission.
