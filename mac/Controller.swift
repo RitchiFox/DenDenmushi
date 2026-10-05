@@ -107,10 +107,15 @@ final class Controller: NSObject, ObservableObject, @preconcurrency NetServiceBr
         }
     }
     private let obs = OBSConnection()
+    private lazy var obsSession = OBSManagedSession(
+        request: { [obs] type, values in try await obs.request(type, values) },
+        close: { [obs] in await obs.close() })
+    private var cleanupTask: Task<Void, Never>?
+    private var cameraSetupTask: Task<Void, Error>?
+    private var quitting = false
     private var tunnel: Process?
     private var heartbeat: Task<Void, Never>?
     private var previewTask: Task<Void, Never>?
-    private var obsOwnsCamera = false
     private var cameraRequested = false
     private var browser = NetServiceBrowser()
     private var services: [NetService] = []
@@ -226,7 +231,7 @@ final class Controller: NSObject, ObservableObject, @preconcurrency NetServiceBr
     }
 
     func reconnectSavedNetwork(_ saved: SavedPi) async -> Bool {
-        guard !busy, !connected, tunnel == nil, SetupFiles.canReconnect(saved: saved, host: host, user: user) else { return false }
+        guard !quitting, !busy, !connected, tunnel == nil, SetupFiles.canReconnect(saved: saved, host: host, user: user) else { return false }
         busy = true; error = nil; status = "Підключаю збереженого равлика…"
         do {
             try startTunnel(savedNetwork: true)
@@ -252,6 +257,7 @@ final class Controller: NSObject, ObservableObject, @preconcurrency NetServiceBr
     }
 
     private func openOBS() async throws {
+        try Task.checkCancellation()
         let fm = FileManager.default
         let obsURL = URL(fileURLWithPath: "/Applications/OBS.app")
         guard fm.fileExists(atPath: obsURL.path) else { throw DemoError("Встанови OBS із obsproject.com. Це безкоштовний компонент віртуальної камери.") }
@@ -273,17 +279,37 @@ final class Controller: NSObject, ObservableObject, @preconcurrency NetServiceBr
         if running == nil {
             let options = NSWorkspace.OpenConfiguration()
             options.activates = false; options.hides = true
-            options.arguments = ["--minimize-to-tray", "--disable-missing-files-check"]
-            _ = try await NSWorkspace.shared.openApplication(at: obsURL, configuration: options)
+            options.arguments = ["--disable-missing-files-check"]
+            let launchRequested = Date()
+            let application = try await NSWorkspace.shared.openApplication(at: obsURL, configuration: options)
+            // openApplication may reuse an OBS instance opened concurrently.
+            // An older or unknown launch date is never ours to terminate.
+            trackOBS(application, launchedByUs: application.launchDate.map { $0 >= launchRequested } ?? false)
+        } else if let running {
+            trackOBS(running, launchedByUs: false)
         }
+        // If Quit arrived during launch, the returned process is now tracked
+        // and cleanup can finish it without letting setup start any camera.
+        try Task.checkCancellation()
         let port = config["server_port"] as? Int ?? 4455
         let password = config["server_password"] as? String ?? ""
         var last: Error = DemoError("OBS не відповідає.")
         for _ in 0..<16 {
+            try Task.checkCancellation()
             do { try await obs.connect(port: port, password: password); return }
             catch { last = error; try await Task.sleep(nanoseconds: 500_000_000) }
         }
         throw last
+    }
+
+    private func trackOBS(_ application: NSRunningApplication, launchedByUs: Bool) {
+        obsSession.attach(.init(
+            isTerminated: { application.isTerminated },
+            terminate: { application.terminate() },
+            reveal: {
+                application.unhide()
+                application.activate(options: [.activateAllWindows])
+            }), launchedByUs: launchedByUs)
     }
 
     private func configureCamera() async throws {
@@ -316,17 +342,17 @@ final class Controller: NSObject, ObservableObject, @preconcurrency NetServiceBr
         } else {
             _ = try await obs.request("CreateInput", ["sceneName": "DenDenMushi", "inputName": "DenDen Camera", "inputKind": "ffmpeg_source", "inputSettings": settings, "sceneItemEnabled": true])
         }
+        obsSession.sourceConfigured = true
         let item = try await obs.request("GetSceneItemId", ["sceneName": "DenDenMushi", "sourceName": "DenDen Camera"])
         guard let id = item["sceneItemId"] as? Int else { throw DemoError("OBS не створив джерело камери.") }
         _ = try await obs.request("SetSceneItemTransform", ["sceneName": "DenDenMushi", "sceneItemId": id, "sceneItemTransform": ["positionX": 0, "positionY": 0, "alignment": 5, "boundsType": "OBS_BOUNDS_SCALE_INNER", "boundsWidth": 1280, "boundsHeight": 720]])
         _ = try await obs.request("SetCurrentProgramScene", ["sceneName": "DenDenMushi"])
+        obsSession.cameraRequested = true
         _ = try await obs.request("StartVirtualCam")
-        obsOwnsCamera = true
-        NSRunningApplication.runningApplications(withBundleIdentifier: "com.obsproject.obs-studio").first?.hide()
     }
 
     func connect() {
-        guard !busy && !connected else { return }
+        guard !quitting && !busy && !connected else { return }
         busy = true; error = nil; status = "Підключаю Pi…"
         UserDefaults.standard.set(host, forKey: "piHost"); UserDefaults.standard.set(user, forKey: "piUser")
         Task {
@@ -342,14 +368,26 @@ final class Controller: NSObject, ObservableObject, @preconcurrency NetServiceBr
     private var servoAutoConnect = false
 
     private func startCameraAndAudio() async throws {
+        guard !quitting, cleanupTask == nil else { throw CancellationError() }
+        let task = Task { try await performCameraSetup() }
+        cameraSetupTask = task
+        defer { cameraSetupTask = nil }
+        try await task.value
+    }
+
+    private func performCameraSetup() async throws {
+        try Task.checkCancellation()
         status = "Готую OBS…"
         try await openOBS()
-        _ = try await api("/camera/start", post: true)
+        try Task.checkCancellation()
         cameraRequested = true
+        _ = try await api("/camera/start", post: true)
+        try Task.checkCancellation()
         // Camera lease is maintained independently during OBS setup.
         connected = true
         startHeartbeat()
         try await configureCamera()
+        try Task.checkCancellation()
         status = "Віртуальна камера запущена"
         detail = "У Meet або Telegram вибери OBS Virtual Camera. Перегляд нижче підтвердить надходження кадрів."
         busy = false
@@ -465,6 +503,24 @@ final class Controller: NSObject, ObservableObject, @preconcurrency NetServiceBr
     private var pairingOpenedOnDisconnect = false
 
     private func cleanup(fullDisconnect: Bool = false) async {
+        // Quit can arrive during Disconnect. Share one teardown so it cannot
+        // close the socket while the first task is checking/finishing OBS.
+        if let cleanupTask { await cleanupTask.value; return }
+        let task = Task {
+            await performCleanup(fullDisconnect: fullDisconnect)
+            cleanupTask = nil
+        }
+        cleanupTask = task
+        await task.value
+    }
+
+    private func performCleanup(fullDisconnect: Bool) async {
+        // A Quit during setup must wait for a pending OBS launch to return and
+        // be tracked. The setup task itself never calls cleanup, avoiding a
+        // cycle when its caller handles cancellation through this same task.
+        let pendingSetup = cameraSetupTask
+        pendingSetup?.cancel()
+        _ = try? await pendingSetup?.value
         audioAdmin.lock()
         pairingOpenedOnDisconnect = false
         servoAutoConnect = false
@@ -508,7 +564,14 @@ final class Controller: NSObject, ObservableObject, @preconcurrency NetServiceBr
         snailAudioAddress = nil; microphoneNotice = ""
         heartbeat?.cancel(); heartbeat = nil
         await pendingPreview?.value
-        if obsOwnsCamera { _ = try? await obs.request("StopVirtualCam"); obsOwnsCamera = false }
+        let obsResult = await obsSession.finish()
+        let obsWarning: String?
+        switch obsResult {
+        case .none: obsWarning = nil
+        case .busy: obsWarning = "OBS залишився відкритим, щоб не перервати іншу роботу в ньому."
+        case .unavailable: obsWarning = "Не вдалося перевірити стан OBS. Закрий його через OBS → Quit OBS, коли завершиш роботу."
+        case .quitRefused: obsWarning = "OBS не завершив роботу. Перевір його вікно й вибери OBS → Quit OBS."
+        }
         if cameraRequested { _ = try? await api("/camera/stop", post: true); cameraRequested = false }
         if fullDisconnect, tunnel?.isRunning == true {
             do {
@@ -519,7 +582,10 @@ final class Controller: NSObject, ObservableObject, @preconcurrency NetServiceBr
                 self.error = L("Равлик від’єднаний, але режим парування недоступний. Онови службу Pi або підключайся через програму.")
             }
         }
-        await obs.close()
+        if let obsWarning {
+            let warning = L(obsWarning)
+            self.error = self.error.map { $0 + "\n" + warning } ?? warning
+        }
         if tunnel?.isRunning == true { tunnel?.terminate() }
         tunnel = nil; connected = false; preview = nil
     }
@@ -538,6 +604,8 @@ final class Controller: NSObject, ObservableObject, @preconcurrency NetServiceBr
     }
     func stopForReset() async { await cleanup(); status = "Камеру зупинено" }
     func quit() {
+        guard !quitting else { return }
+        quitting = true; followNetworkSession = false
         busy = true
         Task { await cleanup(); NSApp.terminate(nil) }
     }

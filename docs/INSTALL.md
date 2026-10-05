@@ -157,6 +157,17 @@ If DenDenMushi asks you to close OBS, quit OBS using its menu and click
 **Connect snail** again. DenDenMushi can then configure and launch OBS.
 Do this outside an existing OBS recording or broadcast.
 
+After **Disconnect completely**, DenDenMushi stops its virtual camera and
+closes the OBS instance it launched, provided OBS is idle. An OBS instance you
+opened yourself stays open. An active recording, stream, replay buffer or other
+camera is preserved; the app tells you when OBS needs manual attention.
+
+Older app versions left OBS hidden after disconnecting. Once you finish your
+call, open OBS from Applications and choose **OBS → Quit OBS** (Command–Q).
+Closing only its window does not quit the app. Update DenDenMushi, then reconnect
+to use the new automatic cleanup. The OBS virtual camera can remain listed in
+call apps after OBS quits because its installed camera extension remains available.
+
 ### Optional: pair in macOS Bluetooth first
 
 With the updated app and device service, the current user can click
@@ -257,6 +268,7 @@ The full live self-update process has not yet been tested on another user’s Ma
 | Build says the audio package is missing | Run `python3 scripts/build-wifi-drivers.py` first |
 | OBS Virtual Camera is missing | OBS is in Applications and its camera extension is allowed |
 | App asks you to close OBS | Quit OBS outside a recording/broadcast, then reconnect |
+| OBS remains in the background after disconnect | Update DenDenMushi; quit an older leftover instance with OBS → Quit OBS. User-opened OBS and active OBS outputs are preserved |
 | Snail is not found | Power, Mac Bluetooth, the owner’s network and macOS permissions |
 | Snail code is rejected | Ask its owner for the current code; do not substitute your Mac password |
 | Wi-Fi audio devices are missing | Install them from Settings, then reopen the call’s device list |

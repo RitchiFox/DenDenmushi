@@ -547,3 +547,6 @@
 "Код суперадміна ще не налаштовано на равлику." = "The superadmin code has not been configured on this snail.";
 "Не вдалося відкрити налаштування звуку. Спробуй ще раз." = "Could not unlock audio settings. Try again.";
 "Доступ суперадміна завершився. Введи код знову." = "Superadmin access has expired. Enter the code again.";
+"OBS залишився відкритим, щоб не перервати іншу роботу в ньому." = "OBS was left open to preserve other work in it.";
+"Не вдалося перевірити стан OBS. Закрий його через OBS → Quit OBS, коли завершиш роботу." = "Could not check OBS status. When you finish using it, choose OBS → Quit OBS.";
+"OBS не завершив роботу. Перевір його вікно й вибери OBS → Quit OBS." = "OBS did not quit. Check its window and choose OBS → Quit OBS.";

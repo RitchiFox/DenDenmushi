@@ -36,7 +36,7 @@ cat > "$APP/Contents/Info.plist" <<'PLIST'
 <key>CFBundleIconFile</key><string>AppIcon</string>
 <key>CFBundlePackageType</key><string>APPL</string>
 <key>CFBundleShortVersionString</key><string>0.9.2</string>
-<key>CFBundleVersion</key><string>62</string>
+<key>CFBundleVersion</key><string>63</string>
 <key>CFBundleDevelopmentRegion</key><string>en</string>
 <key>CFBundleLocalizations</key><array><string>uk</string><string>cs</string><string>en</string></array>
 <key>LSMinimumSystemVersion</key><string>14.0</string>

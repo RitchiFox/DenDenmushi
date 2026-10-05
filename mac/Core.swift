@@ -68,12 +68,14 @@ actor OBSConnection {
         guard try await receive()["op"] as? Int == 2 else { throw DemoError("OBS відхилив доступ.") }
     }
     func request(_ type: String, _ values: [String: Any] = [:]) async throws -> [String: Any] {
+        try Task.checkCancellation()
         // Actor methods are reentrant across await: serialize the whole exchange
         // so a screenshot request cannot consume a StopVirtualCam response.
         while requesting { try await Task.sleep(nanoseconds: 20_000_000) }
         requesting = true
         defer { requesting = false }
         for attempt in 0..<20 {
+            try Task.checkCancellation()
             let id = UUID().uuidString
             try await send(["op": 6, "d": ["requestType": type, "requestId": id, "requestData": values]])
             while true {

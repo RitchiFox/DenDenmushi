@@ -13,3 +13,6 @@ xcrun swiftc -swift-version 5 -parse-as-library -module-cache-path "$ROOT/build/
   "$ROOT/mac/AudioLevels.swift" "$ROOT/tests/AudioLevelsSmoke.swift" -o "$ROOT/build/audio-levels-smoke"
 "$ROOT/build/audio-levels-smoke"
 bash "$ROOT/scripts/test-audio-admin.sh"
+xcrun swiftc -swift-version 5 -parse-as-library -module-cache-path "$ROOT/build/cache" \
+  "$ROOT/mac/OBSManagedSession.swift" "$ROOT/tests/OBSManagedSessionSmoke.swift" -o "$ROOT/build/obs-managed-session-smoke"
+"$ROOT/build/obs-managed-session-smoke"

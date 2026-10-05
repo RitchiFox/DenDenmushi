@@ -547,3 +547,6 @@
 "Код суперадміна ще не налаштовано на равлику." = "Kód superadministrátora na Šlimakovi ještě není nastaven.";
 "Не вдалося відкрити налаштування звуку. Спробуй ще раз." = "Nastavení zvuku se nepodařilo odemknout. Zkus to znovu.";
 "Доступ суперадміна завершився. Введи код знову." = "Přístup superadministrátora vypršel. Zadej kód znovu.";
+"OBS залишився відкритим, щоб не перервати іншу роботу в ньому." = "OBS zůstal otevřený, aby se nepřerušila jiná práce v něm.";
+"Не вдалося перевірити стан OBS. Закрий його через OBS → Quit OBS, коли завершиш роботу." = "Stav OBS se nepodařilo ověřit. Až dokončíš práci, ukonči ho přes OBS → Quit OBS.";
+"OBS не завершив роботу. Перевір його вікно й вибери OBS → Quit OBS." = "OBS se neukončil. Zkontroluj jeho okno a zvol OBS → Quit OBS.";
