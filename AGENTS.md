@@ -12,7 +12,7 @@ or first-time Pi setup. Do not request Pi credentials just to build the Mac app.
 1. Run `bash scripts/doctor.sh` (read-only). Explain what is installed, missing,
    automatic, and user-assisted. macOS 14+ is required. Apple Silicon is tested;
    Intel is not. Linux/Windows cannot run this desktop app.
-2. Check Xcode Command Line Tools, Python 3 and OBS. Install missing dependencies
+2. Check Xcode 16+ / Command Line Tools with Swift 6+, Python 3 and OBS. Install missing dependencies
    within the user's setup authorization, from official sources. Verify current
    installation guidance. Use an existing package manager if suitable; do not
    add one or execute remote shell installers without explaining the change.

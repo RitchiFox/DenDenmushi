@@ -1,6 +1,11 @@
 #!/bin/bash
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+SWIFT_MAJOR="$(xcrun swiftc --version | sed -nE 's/.*Swift version ([0-9]+).*/\1/p' | head -1)"
+if [ -z "$SWIFT_MAJOR" ] || [ "$SWIFT_MAJOR" -lt 6 ]; then
+  echo 'Swift 6+ is required. Update Xcode / Command Line Tools (Xcode 16+).' >&2
+  exit 1
+fi
 BUILD="${DENDEN_BUILD_DIR:-$ROOT/build}"
 APP="$BUILD/DenDenMushi.app"
 if [ ! -f "$ROOT/Resources/DenDenMushi-WiFi-Audio.pkg" ]; then

@@ -24,7 +24,13 @@ check git 'install Xcode Command Line Tools'
 check xcrun 'run xcode-select --install and finish the Apple dialog'
 check python3 'install Python 3 from python.org'
 if xcrun --find swiftc >/dev/null 2>&1 && xcrun --find clang >/dev/null 2>&1; then
-  echo 'OK: Swift and Clang toolchains'
+  swift_major="$(xcrun swiftc --version | sed -nE 's/.*Swift version ([0-9]+).*/\1/p' | head -1)"
+  if [ -n "$swift_major" ] && [ "$swift_major" -ge 6 ]; then
+    echo 'OK: Swift 6+ and Clang toolchains'
+  else
+    echo 'MISSING: Swift 6+ — update Xcode / Command Line Tools (Xcode 16+)'
+    missing=1
+  fi
 else
   echo 'MISSING: Swift/Clang — finish Xcode Command Line Tools installation'
   missing=1

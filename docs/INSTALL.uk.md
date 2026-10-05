@@ -32,7 +32,7 @@ Codex читає `AGENTS.md`, Claude — `CLAUDE.md`, який веде до т�
 2. Установи [OBS Studio](https://obsproject.com/download) у **Applications / Програми**.
    Він надає OBS Virtual Camera. Дозволь його розширення камери, якщо macOS попросить.
 3. У Terminal виконай `xcode-select --install` і заверши діалог Apple.
-   Якщо інструменти вже встановлено, повторне встановлення не потрібне.
+   Потрібен Swift 6+ (Xcode / Command Line Tools 16+): перевір `xcrun swiftc --version`. Якщо є лише Swift 5, спершу онови інструменти.
 4. Перевір `python3 --version`. Якщо Python 3 немає, встанови його з
    [python.org](https://www.python.org/downloads/macos/).
 

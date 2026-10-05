@@ -27,7 +27,7 @@
 | Частина | Вимоги |
 | --- | --- |
 | Mac | macOS 14 або новіша; перевірено Apple Silicon, Intel не перевірено |
-| Збірка | Xcode Command Line Tools зі Swift, Python 3 |
+| Збірка | Xcode 16+ / Command Line Tools зі Swift 6+, Python 3 |
 | Камера для дзвінків | Окремо встановлений [OBS Studio](https://obsproject.com/) у `/Applications/OBS.app` |
 | Raspberry Pi | Перевірено Pi 3 Model B, Debian / Raspberry Pi OS Bookworm, Camera Module 3 |
 | Служби Pi | SSH, sudo, NetworkManager, BlueZ, PipeWire / WirePlumber, `rpicam-vid`, `ffmpeg`, PulseAudio utilities |
