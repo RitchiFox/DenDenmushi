@@ -96,6 +96,15 @@ Read the check results before continuing:
   you install them later from the app’s settings.
 - **PRESENT**: the driver files exist; this does not verify sound quality.
 
+The compiler check type-checks a small SwiftUI view, including `@State`, in a
+temporary directory that is removed afterwards. It does not launch an app or
+change your selected developer tools. A Swift 6+ version number alone is not
+enough: the selected compiler and SDK must also provide SwiftUI's required
+components. If this check fails (for example, a missing `SwiftUIMacros` plugin),
+select or update a compatible Xcode / Command Line Tools installation and run
+the check again. If you explicitly set `SDKROOT`, use the same setting for
+`doctor.sh` and both build commands; the checker does not choose a fallback SDK.
+
 ### 3. Build and open the app
 
 Once no required components are missing, run:
@@ -228,6 +237,7 @@ The full live self-update process has not yet been tested on another user’s Ma
 | --- | --- |
 | `xcrun` or `swiftc` is missing | Finish installing Xcode Command Line Tools |
 | Swift 5 is reported | Update to tools providing Swift 6+ |
+| Doctor reports missing SwiftUI compiler/SDK support | Select or update compatible Xcode / Command Line Tools; rerun doctor with the same SDK selection as the build |
 | Build says the audio package is missing | Run `python3 scripts/build-wifi-drivers.py` first |
 | OBS Virtual Camera is missing | OBS is in Applications and its camera extension is allowed |
 | App asks you to close OBS | Quit OBS outside a recording/broadcast, then reconnect |
