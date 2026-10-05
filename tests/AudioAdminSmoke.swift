@@ -2,6 +2,15 @@ import Foundation
 
 @main
 struct AudioAdminSmoke {
+    @MainActor static func waitFor(_ predicate: () -> Bool) async throws {
+        let deadline = ProcessInfo.processInfo.systemUptime + 5
+        while !predicate() {
+            precondition(ProcessInfo.processInfo.systemUptime < deadline,
+                         "Audio admin async transition timed out")
+            try await Task.sleep(nanoseconds: 1_000_000)
+        }
+    }
+
     @MainActor static func main() async throws {
         let token = String(repeating: "a", count: 43)
         var calls = [(String, String?)]()
@@ -23,7 +32,7 @@ struct AudioAdminSmoke {
         let beforeLock = resets
         admin.lock()
         precondition(!admin.unlocked && admin.sessionToken == nil && resets == beforeLock + 1)
-        await Task.yield()
+        try await waitFor { calls.contains(where: { $0.0 == "/audio/admin/lock" && $0.1 == token }) }
         precondition(calls.contains(where: { $0.0 == "/audio/admin/lock" && $0.1 == token }))
 
         reply = (401, ["ok": false, "error": "admin_invalid_pin"])
@@ -37,6 +46,9 @@ struct AudioAdminSmoke {
         await admin.unlock(pin: "246813", connected: true, supported: true)
         precondition(admin.unlocked)
         try await Task.sleep(nanoseconds: 100_000_000)
+        // Token expiry must not depend on the UI cleanup task being scheduled.
+        precondition(admin.sessionToken == nil)
+        try await waitFor { !admin.unlocked }
         precondition(!admin.unlocked && admin.sessionToken == nil)
 
         var resume: CheckedContinuation<(Int, [String: Any]), Never>?
