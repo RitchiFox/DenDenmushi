@@ -531,3 +531,6 @@
 "Оновити й перезапустити" = "Update and restart";
 "Оновлення закриє програму, збере нову версію в Terminal і відкриє її. Потрібні інструменти розробника та інтернет. Попередня копія збережеться поруч. Pi не оновлюється." = "Updating closes the app, builds the new version in Terminal, and reopens it. Developer tools and internet are required. A backup is kept alongside the app. Pi is not updated.";
 "Спочатку від’єднай равлика та дочекайся завершення поточних дій." = "Disconnect the snail and wait for current operations to finish first.";
+"Режим Bluetooth-парування не ввімкнувся." = "Bluetooth pairing mode did not start.";
+"Равлик від’єднаний, але режим парування недоступний. Онови службу Pi або підключайся через програму." = "The snail is disconnected, but pairing mode is unavailable. Update the Pi service or connect through the app.";
+"Равлик видимий у Bluetooth протягом 3 хвилин. На іншому Mac вибери DenDenMushi, потім відкрий програму й введи код равлика." = "The snail is visible in Bluetooth for 3 minutes. Select DenDenMushi on the other Mac, then open the app and enter the snail code.";

@@ -101,6 +101,13 @@ def main():
         raise RuntimeError("Bluetooth adapter lacks GATT/advertising support")
     proxy = bus.get_object("org.bluez", adapter)
     dbus.Interface(proxy, PROPS).Set("org.bluez.Adapter1", "Powered", dbus.Boolean(True))
+    from pairing import start_pairing
+    try:
+        pairing_state = start_pairing(bus, adapter, config["user"])
+    except Exception:
+        # Classic pairing is optional; keep authenticated BLE provisioning alive.
+        print("Classic Bluetooth pairing unavailable", flush=True)
+        pairing_state = None
     loop = GLib.MainLoop()
 
     def failed(error):

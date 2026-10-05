@@ -445,7 +445,10 @@ final class Controller: NSObject, ObservableObject, @preconcurrency NetServiceBr
         }
     }
 
+    private var pairingOpenedOnDisconnect = false
+
     private func cleanup(fullDisconnect: Bool = false) async {
+        pairingOpenedOnDisconnect = false
         servoAutoConnect = false
         var bluetoothPeer = snailAudioAddress
         let pendingPreview = previewTask
@@ -489,6 +492,15 @@ final class Controller: NSObject, ObservableObject, @preconcurrency NetServiceBr
         await pendingPreview?.value
         if obsOwnsCamera { _ = try? await obs.request("StopVirtualCam"); obsOwnsCamera = false }
         if cameraRequested { _ = try? await api("/camera/stop", post: true); cameraRequested = false }
+        if fullDisconnect, tunnel?.isRunning == true {
+            do {
+                let pairing = try await api("/bluetooth/pairing/open", post: true, timeout: 8)
+                if pairing["active"] as? Bool != true { throw DemoError("Режим Bluetooth-парування не ввімкнувся.") }
+                pairingOpenedOnDisconnect = true
+            } catch {
+                self.error = L("Равлик від’єднаний, але режим парування недоступний. Онови службу Pi або підключайся через програму.")
+            }
+        }
         await obs.close()
         if tunnel?.isRunning == true { tunnel?.terminate() }
         tunnel = nil; connected = false; preview = nil
@@ -503,7 +515,7 @@ final class Controller: NSObject, ObservableObject, @preconcurrency NetServiceBr
             busy = false
             status = error == nil ? "Равлик від’єднаний" : "Від’єднано з попередженням"
             audioStatus = "Звук підключиться разом із камерою."
-            detail = "Камеру, звук і керування сервами завершено. Равлик залишається увімкненим."
+            detail = pairingOpenedOnDisconnect ? "Равлик видимий у Bluetooth протягом 3 хвилин. На іншому Mac вибери DenDenMushi, потім відкрий програму й введи код равлика." : "Камеру, звук і керування сервами завершено. Равлик залишається увімкненим."
         }
     }
     func stopForReset() async { await cleanup(); status = "Камеру зупинено" }

@@ -38,7 +38,10 @@ if systemctl cat denden-demo.service >/dev/null 2>&1; then
 fi
 install -d -o root -g root -m 755 /opt/denden-demo
 /usr/bin/python3 -E -s -B install_files.py
-install -o root -g root -m 644 waiting.wav /opt/denden-demo/waiting.wav
+# Keep the owner's custom waiting cue during service updates.
+if [ ! -f /opt/denden-demo/waiting.wav ]; then
+  install -o root -g root -m 644 waiting.wav /opt/denden-demo/waiting.wav
+fi
 # Retire the old root/DMA service. The boot recovery mask stays in place.
 if [ -f /etc/systemd/system/denden-servos.service ] && [ ! -L /etc/systemd/system/denden-servos.service ]; then
   cp -p /etc/systemd/system/denden-servos.service /etc/systemd/system/denden-servos.service.retired

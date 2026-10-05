@@ -4,7 +4,7 @@ import os
 from pathlib import Path
 import tempfile
 
-PAYLOAD = ("device_history.py", "waiting.py", "wifi_audio.py", "server.py", "audio.py", "quiet.py", "bluetooth_diagnostics.py",
+PAYLOAD = ("pairing.py", "device_history.py", "waiting.py", "wifi_audio.py", "server.py", "audio.py", "quiet.py", "bluetooth_diagnostics.py",
            "bluetooth_sco.py", "servos.py", "servo_pwm.py", "servo_pwm_setup.py", "provision.py", "provision_core.py",
            "provision_backend.py", "provision_admin.py", "install_files.py")
 

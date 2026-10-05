@@ -18,6 +18,7 @@ first installation and call on another user’s Mac still need validation.
 - Wi-Fi echo cancellation; residual echo can still occur.
 - Eye open/close buttons and a camera-tilt slider for the calibrated snail.
 - Saved connections, Wi-Fi network management and device history.
+- A 3-minute Bluetooth pairing window after an explicit full disconnect (requires the updated Pi service).
 - Waiting-sound volume and mute controls.
 - English, Ukrainian and Czech interface languages.
 - GitHub update checks and an explicit **Update and restart** button.

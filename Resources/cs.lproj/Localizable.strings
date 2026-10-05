@@ -531,3 +531,6 @@
 "Оновити й перезапустити" = "Aktualizovat a restartovat";
 "Оновлення закриє програму, збере нову версію в Terminal і відкриє її. Потрібні інструменти розробника та інтернет. Попередня копія збережеться поруч. Pi не оновлюється." = "Aktualizace zavře aplikaci, sestaví novou verzi v Terminálu a znovu ji otevře. Vyžaduje vývojové nástroje a internet. Záloha zůstane vedle aplikace. Pi se neaktualizuje.";
 "Спочатку від’єднай равлика та дочекайся завершення поточних дій." = "Nejprve odpojte šneka a počkejte na dokončení probíhajících operací.";
+"Режим Bluetooth-парування не ввімкнувся." = "Režim párování Bluetooth se nespustil.";
+"Равлик від’єднаний, але режим парування недоступний. Онови службу Pi або підключайся через програму." = "Šnek je odpojen, ale režim párování není dostupný. Aktualizujte službu Pi nebo se připojte přes aplikaci.";
+"Равлик видимий у Bluetooth протягом 3 хвилин. На іншому Mac вибери DenDenMushi, потім відкрий програму й введи код равлика." = "Šnek je viditelný v Bluetooth po dobu 3 minut. Na druhém Macu vyberte DenDenMushi, pak otevřete aplikaci a zadejte kód šneka.";

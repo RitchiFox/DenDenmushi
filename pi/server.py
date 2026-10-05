@@ -95,7 +95,7 @@ class Camera:
         self.stop()
 
 
-def handler_for(camera, audio=None, servos=None, wifi=None, waiting=None, history=None):
+def handler_for(camera, audio=None, servos=None, wifi=None, waiting=None, history=None, pairing=None):
     class Handler(BaseHTTPRequestHandler):
         def reply(self, code, payload):
             data = json.dumps(payload).encode()
@@ -122,6 +122,11 @@ def handler_for(camera, audio=None, servos=None, wifi=None, waiting=None, histor
                     return self.reply(200, Backend(pwd.getpwuid(os.getuid()).pw_name).saved_wifi(offset))
                 except Exception:
                     return self.reply(503, {"error": "wifi_list_unavailable"})
+            if self.path == "/bluetooth/pairing" and pairing is not None:
+                try:
+                    return self.reply(200, pairing.command("status"))
+                except (OSError, ValueError):
+                    return self.reply(503, {"ok": False, "error": "pairing_unavailable"})
             if self.path == "/devices/history" and history is not None:
                 return self.reply(200, history.status())
             if self.path == "/audio/waiting" and waiting is not None:
@@ -155,6 +160,8 @@ def handler_for(camera, audio=None, servos=None, wifi=None, waiting=None, histor
             features = ["audio-connect-v1", "audio-levels-v1", "audio-split-io-v1", "audio-call-v1", "audio-mic-gain-v1"] if audio else []
             if audio and getattr(audio, "quiet", None):
                 features.append("audio-idle-mute-v1")
+            if pairing is not None:
+                features.append("bluetooth-pairing-window-v1")
             if history is not None:
                 features.append("device-history-v1")
             if waiting is not None:
@@ -171,6 +178,24 @@ def handler_for(camera, audio=None, servos=None, wifi=None, waiting=None, histor
         def do_POST(self):
             if not self.allowed():
                 return self.reply(403, {"error": "native client required"})
+            if self.path == "/bluetooth/pairing/open" and pairing is not None:
+                if self.headers.get("Transfer-Encoding") or self.headers.get("Content-Length") not in (None, "0", "2"):
+                    return self.reply(400, {"ok": False, "error": "invalid_request"})
+                if self.headers.get("Content-Length") == "2":
+                    self.connection.settimeout(2)
+                    if self.rfile.read(2) != b"{}":
+                        return self.reply(400, {"ok": False, "error": "invalid_request"})
+                if camera.status()["requested"] or (wifi is not None and wifi.status().get("active")):
+                    return self.reply(409, {"ok": False, "error": "device_busy"})
+                try:
+                    return self.reply(200, pairing.command("open"))
+                except (OSError, ValueError):
+                    return self.reply(503, {"ok": False, "error": "pairing_unavailable"})
+            if self.path == "/camera/start" and pairing is not None:
+                try:
+                    pairing.command("close")
+                except (OSError, ValueError):
+                    pass  # BlueZ also enforces the bounded timeout.
             if self.path == "/audio/waiting" and waiting is not None:
                 try:
                     self.connection.settimeout(3)
@@ -258,6 +283,8 @@ def main():
     from quiet import QuietOutput
     from servos import ServoClient
     from wifi_audio import WiFiAudio
+    from pairing import PairingClient
+    pairing = PairingClient()
     camera = Camera()
     audio = Audio(quiet=QuietOutput("/var/lib/denden-audio/quiet.json"))
     worker = threading.Thread(target=camera.run, daemon=True)
@@ -274,7 +301,7 @@ def main():
     history = DeviceHistory()
     history_worker = threading.Thread(target=history.run, daemon=True)
     history_worker.start()
-    server = ThreadingHTTPServer(("127.0.0.1", 8789), handler_for(camera, audio, servos, wifi, waiting, history))
+    server = ThreadingHTTPServer(("127.0.0.1", 8789), handler_for(camera, audio, servos, wifi, waiting, history, pairing))
     server.daemon_threads = True
     def shutdown(*_):
         history.closed.set()

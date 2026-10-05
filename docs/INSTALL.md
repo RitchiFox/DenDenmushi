@@ -144,6 +144,25 @@ If DenDenMushi asks you to close OBS, quit OBS using its menu and click
 **Connect snail** again. DenDenMushi can then configure and launch OBS.
 Do this outside an existing OBS recording or broadcast.
 
+### Optional: pair in macOS Bluetooth first
+
+With the updated app and device service, the current user can click
+**Disconnect completely** to make the snail visible for **3 minutes**.
+On the other Mac, open **System Settings → Bluetooth**, select **DenDenMushi**
+and connect. Then open the app, click **Connect snail** and enter the owner’s
+snail code. Both Macs still need access to the snail’s local network for video
+and Wi-Fi audio.
+
+The pairing window closes after one new device pairs, when the app starts a
+camera connection, or when the timer expires. Pairing does not replace the
+app’s code-based access. Normal discovery through **Connect snail** remains
+available without this extra system-pairing step. If the timer has expired,
+the owner can connect and then fully disconnect again to reopen it.
+
+If the app reports that pairing mode is unavailable, the owner needs to update
+the Pi service separately; updating only the Mac app does not add it to an older
+snail. Do not reinstall device services just to join as a guest.
+
 ### 6. Set up Wi-Fi audio and your call
 
 1. Open **Settings → Audio transport** and select **Wi-Fi**.
