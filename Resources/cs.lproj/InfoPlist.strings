@@ -1,0 +1,3 @@
+"NSLocalNetworkUsageDescription" = "Pro vyhledání a připojení tvého DenDenMushi v místní síti.";
+"NSBluetoothAlwaysUsageDescription" = "K vyhledání DenDenMushi, přenosu nastavení Wi-Fi a obnovení jeho Bluetooth zvuku.";
+"NSMicrophoneUsageDescription" = "Pro přenos zvuku z virtuálního zařízení DenDenMushi do reproduktorů přes Wi-Fi.";

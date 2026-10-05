@@ -1,0 +1,3 @@
+"NSLocalNetworkUsageDescription" = "To find and connect to your DenDenMushi on the local network.";
+"NSBluetoothAlwaysUsageDescription" = "To find DenDenMushi, transfer Wi-Fi settings and restore its Bluetooth audio.";
+"NSMicrophoneUsageDescription" = "To send audio from the DenDenMushi virtual device to your snail speakers over Wi-Fi.";

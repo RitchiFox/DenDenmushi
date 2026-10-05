@@ -1,0 +1,9 @@
+Generator: built-in image_gen (transparent_background=true).
+Final assets: eye-open-law.png, eye-closed-law.png.
+Reference: user screenshot of Law Den Den Mushi, 2026-10-05 08.23.39.
+
+OPEN PROMPT:
+Use case: stylized-concept. Reference image: identity/style reference of Trafalgar Law's Den Den Mushi. Create a transparent UI illustration of ONE isolated OPEN eye matching this snail's actual eye design: pale yellow-green oval fleshy eye mound, heavy drooping upper lid, narrow clearly visible white horizontal eye opening and small dark pupil, thin muted olive-brown outline and flat anime cel shading. Sleepy relaxed expression as in reference, NOT a round wide-open eyeball. A tiny short base only, not a long stalk. Front-facing centered square canvas, generous transparent padding, readable at 80px. Show just one eye, no other eye, no face/body/hat/shell/telephone, no text, no background. Actual transparent background. This is an illustrated button asset, not a screenshot.
+
+CLOSED PROMPT (edit of open asset):
+Use case: precise-object-edit. Create matching CLOSED-eye state for this exact Law Den Den Mushi eye button asset. Change ONLY the eyelid aperture: fully close it, replacing ALL white and pupil with the same pale yellow-green eyelid skin and one clear thin dark olive gently curved seam. Unmistakably shut relaxed eye. Preserve silhouette, position, size, tiny base, canvas, palette, shading and transparent background exactly. No text or extra objects. Transparent PNG.
