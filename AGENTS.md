@@ -12,6 +12,8 @@ or first-time Pi setup. Do not request Pi credentials just to build the Mac app.
 1. Run `bash scripts/doctor.sh` (read-only). Explain what is installed, missing,
    automatic, and user-assisted. macOS 14+ is required. Apple Silicon is tested;
    Intel is not. Linux/Windows cannot run this desktop app.
+   Resolve MISSING/UNSUPPORTED before building. OPTIONAL SETUP audio drivers
+   can wait until the app is built. Do not call PRESENT a functional sound test.
 2. Check Xcode 16+ / Command Line Tools with Swift 6+, Python 3 and OBS. Install missing dependencies
    within the user's setup authorization, from official sources. Verify current
    installation guidance. Use an existing package manager if suitable; do not
@@ -31,6 +33,8 @@ or first-time Pi setup. Do not request Pi credentials just to build the Mac app.
 6. The user completes macOS privacy/admin prompts. Explain permissions when
    needed; never disable Gatekeeper, SIP or privacy controls. Use protected app
    fields for passwords, not chat/public issues or command-line arguments.
+   Distinguish the Mac administrator password, Pi Linux account password,
+   snail pairing code and Wi-Fi password. Public cloning needs no GitHub token.
 7. Install Wi-Fi audio devices through app Settings. This restarts CoreAudio
    and interrupts all Mac sound: do it outside a call. Honor existing permission
    instead of repeatedly asking for the same authorization.
