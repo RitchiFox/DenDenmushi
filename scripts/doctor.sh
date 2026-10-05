@@ -49,5 +49,5 @@ for role in Mic Speaker; do
   fi
 done
 echo 'Pi, permissions, camera, audio quality and servo calibration were not tested.'
-echo 'Next: docs/INSTALL.uk.md; agents also read AGENTS.md.'
+echo 'Next: docs/INSTALL.md; agents also read AGENTS.md.'
 exit "$missing"

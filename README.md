@@ -1,89 +1,81 @@
 # DenDenMushi 🐌
 
-Десктопний застосунок для macOS, який підключає Raspberry Pi з камерою,
-мікрофоном, динаміками та сервоприводами до відеодзвінків.
+A macOS desktop app that connects your prepared DenDenMushi snail’s camera,
+microphone, speakers and movement controls to your Mac.
 
-**Статус: експериментальний прототип для конкретної конструкції равлика.**
-Це початкова публічна версія, а не універсальний драйвер для будь-якого Pi.
+**Start here: [Install DenDenMushi on your Mac](docs/INSTALL.md).**
+The guide covers desktop installation and connection to an already configured
+snail. You do not need to set up Raspberry Pi services to add another Mac.
 
-**Почни тут: [покрокове встановлення українською](docs/INSTALL.uk.md).**
-Для встановлення через Codex або Claude Code є [AGENTS.md](AGENTS.md)
-і [CLAUDE.md](CLAUDE.md): автоматичні кроки, потрібні дозволи та перевірка результату.
+**Status:** experimental prototype. Apple Silicon builds are tested; Intel is
+unverified. Builds and automated tests have passed on GitHub, but a complete
+first installation and call on another user’s Mac still need validation.
 
-## Можливості
+## Features
 
-- Камера Pi через Wi-Fi та OBS Virtual Camera для Meet / Telegram.
-- Двосторонній звук через Wi-Fi або Bluetooth; регулювання гучності й мікрофона.
-- Програмне приглушення еха у Wi-Fi-режимі. Залишкове ехо ще можливе.
-- Кнопки відкриття й закриття очей та вертикальний повзунок нахилу камери.
-- Плавний рух серв за 0,5 секунди, автоматичне підключення керування.
-- Налаштування Pi через Bluetooth, збережені Wi-Fi-мережі та історія пристроїв.
-- Вимкнення звуку очікування та вибір його гучності.
-- Українська, англійська та чеська мови.
-- Перевірка GitHub під час запуску й оновлення Mac-програми за натисканням.
+- Live camera preview and OBS Virtual Camera for Meet / Telegram.
+- Two-way Wi-Fi or Bluetooth audio with speaker and microphone level controls.
+- Wi-Fi echo cancellation; residual echo can still occur.
+- Eye open/close buttons and a camera-tilt slider for the calibrated snail.
+- Saved connections, Wi-Fi network management and device history.
+- Waiting-sound volume and mute controls.
+- English, Ukrainian and Czech interface languages.
+- GitHub update checks and an explicit **Update and restart** button.
 
-## Що потрібно
+## Mac requirements
 
-| Частина | Вимоги |
+| Component | Requirement |
 | --- | --- |
-| Mac | macOS 14 або новіша; перевірено Apple Silicon, Intel не перевірено |
-| Збірка | Xcode 16+ / Command Line Tools зі Swift 6+, Python 3 |
-| Камера для дзвінків | Окремо встановлений [OBS Studio](https://obsproject.com/) у `/Applications/OBS.app` |
-| Raspberry Pi | Перевірено Pi 3 Model B, Debian / Raspberry Pi OS Bookworm, Camera Module 3 |
-| Служби Pi | SSH, sudo, NetworkManager, BlueZ, PipeWire / WirePlumber, `rpicam-vid`, `ffmpeg`, PulseAudio utilities |
-| Серви | Три SG92R; ядро з `pwm-gpio` та відповідним Device Tree overlay |
-| Звук | USB-звукова карта з мікрофонним входом і виходом на підсилювач |
-| Мережа | Mac і Pi у спільній локальній мережі; Pi 3 Model B підтримує лише 2,4 ГГц |
+| Operating system | macOS 14 or later; Apple Silicon tested, Intel unverified |
+| Build tools | Xcode / Command Line Tools 16+ with Swift 6+; a macOS version supporting those tools |
+| Python | Python 3 for building the audio package and updates |
+| Virtual camera | [OBS Studio](https://obsproject.com/download) in `/Applications/OBS.app` |
+| Snail access | A powered-on, already configured device and its owner-provided connection code |
+| Connection | Same local network; Mac Bluetooth enabled for initial discovery |
 
-Не підключай механізм із невідомими межами до керування: поточні кути
-підібрані для авторського прототипу. Спершу прочитай [підключення обладнання](docs/HARDWARE.md).
+The project currently distributes source code, not a notarized binary installer.
+Build for your Mac using the [step-by-step guide](docs/INSTALL.md).
 
-## Зібрати й запустити
+## Install with an agent
 
-Публічна версія поки поширюється як вихідний код. Нотаризованого інсталятора немає.
-Команди збирають програму локально; вони не встановлюють служби Pi чи аудіодрайвери.
+Open the project in a local Codex or Claude Code session and ask it to install
+only the Mac app using [AGENTS.md](AGENTS.md) and [the installation guide](docs/INSTALL.md).
+[CLAUDE.md](CLAUDE.md) points Claude to the same instructions. The agent can check
+dependencies and build; you complete macOS prompts and enter the snail’s code.
+
+## Build from source
+
+After installing the prerequisites:
 
 ```sh
 git clone https://github.com/TimeSkipe/DenDenmushi.git
 cd DenDenmushi
+bash scripts/doctor.sh
+```
+
+Resolve any required missing components, then run:
+
+```sh
 python3 scripts/build-wifi-drivers.py
 bash scripts/build-app.sh
 open build/DenDenMushi.app
 ```
 
-Якщо інструментів розробника немає, встанови їх командою `xcode-select --install`.
-Збірка створює застосунок для архітектури поточного Mac і підписує його локально.
-Програму можна перенести до Applications. Для поширення готового застосунку
-потрібна окрема процедура підписання та нотаризації.
+The build does not install audio drivers or modify the snail. Wi-Fi audio
+installation is a separate Settings action that briefly restarts Mac audio;
+do it outside a call. Keep only one copy of DenDenMushi running.
 
-Аудіодрайвери зібрані з включеного коду BlackHole. Установлення драйверів
-виконується окремо з налаштувань застосунку та перезапускає системний звук Mac.
-Не запускай установлення під час дзвінка.
+If the app initially opens in Ukrainian, go to **Налаштування → Мова програми**
+and select **English**. See the guide for connection and call-device selection.
 
-## Перше підключення
+## Updates
 
-1. Встанови ОС Pi, налаштуй Wi-Fi та SSH і перевір, що камера працює в ОС.
-2. Відкрий **Налаштування → Підготовка нового Pi / оновлення сервісу**.
-3. Введи адресу Pi, власне ім’я користувача та пароль цього користувача з sudo.
-   У репозиторії немає готового пароля чи облікового запису.
-4. Перевір SSH-відбиток і запусти підготовку. Вона встановлює та перезапускає
-   системні служби на Pi; це крок налаштування власником обладнання.
-5. Дозволь застосунку Bluetooth, локальну мережу та потрібні аудіодозволи.
-6. Натисни **Підключити равлика**. Для нового Mac введи код равлика,
-   отриманий від його власника. Код равлика і пароль Linux — різні речі.
-7. У Meet / Telegram вибери **OBS Virtual Camera**. Для Wi-Fi-звуку встанови
-   аудіопристрої через налаштування й вибери **DenDenMushi Wi-Fi Microphone**
-   та **DenDenMushi Wi-Fi Speakers** у програмі дзвінка.
+Use **Settings → App updates**. Updating is available after disconnecting the
+snail and builds the selected `main` commit locally. Developer tools and internet
+access are required; a previous-app backup is retained. Pi services and installed
+audio drivers are not automatically updated. See [Update the app](docs/INSTALL.md#update-the-app).
 
-Прочитай [налаштування і відомі обмеження](docs/SETUP.md) перед установленням на інше обладнання.
-
-## Для розробників
-
-**Оновлення:** у налаштуваннях є перевірка GitHub і кнопка «Оновити й перезапустити».
-Вона доступна після від'єднання равлика. Нова версія з гілки `main` збирається
-локально в Terminal; інструменти розробника мають залишатися встановленими.
-Стара програма зберігається поруч. Pi та встановлені аудіодрайвери автоматично
-не оновлюються. Деталі — в [інструкції](docs/INSTALL.uk.md#оновлення-програми).
+## Development
 
 ```sh
 python3 -m venv .venv
@@ -93,17 +85,19 @@ bash scripts/test-swift.sh
 bash scripts/test-localization.sh
 ```
 
-Python-тести використовують підроблені пристрої, тимчасові файли й локальні
-сокети. Вони не доводять якість акустики чи сумісність з будь-яким обладнанням.
-GitHub Actions перевіряє Python-тести та збірку macOS; апаратні тести потрібні окремо.
+Run Swift checks after building the app. Python tests use fake devices,
+temporary files and local sockets. GitHub Actions checks Python tests and the
+macOS build. These checks do not verify real audio quality or mechanical safety.
 
-Структура: `mac/` — SwiftUI-застосунок, `pi/` — служби Raspberry Pi,
-`scripts/` — збірка, `tests/` — перевірки, `Resources/` — переклади та графіка,
-`vendor/BlackHole/` — вихідний код окремих віртуальних аудіопристроїв.
+`mac/` contains the SwiftUI app; `pi/` contains the device services;
+`scripts/` contains build tools; `tests/` contains checks; `Resources/` contains
+translations and artwork; `vendor/BlackHole/` contains virtual audio driver source.
 
-## Ліцензія
+Device builders and maintainers can consult [device setup notes](docs/SETUP.md)
+and [hardware limits](docs/HARDWARE.md). Those are not desktop installation steps.
 
-GPL-3.0-only, див. [LICENSE](LICENSE). Походження компонентів і ресурсів:
-[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
-Публічний звук очікування синтезований скриптом `scripts/generate-waiting-tone.py`;
-запис із YouTube не включено. Це незалежний фанатський проєкт.
+## License
+
+GPL-3.0-only; see [LICENSE](LICENSE) and [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+The public waiting cue is synthesized by `scripts/generate-waiting-tone.py`;
+no YouTube recording is included. This is an independent fan project.

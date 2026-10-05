@@ -1,13 +1,16 @@
 # DenDenMushi: instructions for installation and coding agents
 
-Read this file, `docs/INSTALL.uk.md`, `docs/HARDWARE.md` and `docs/SETUP.md`.
+Read this file and `docs/INSTALL.md`. Read `docs/HARDWARE.md` and
+`docs/SETUP.md` only for device-side work explicitly requested by the owner.
 Respond in the user's language. These instructions apply only to this repository.
 
 ## When asked to install
 
-Carry out authorized work instead of merely printing commands. Determine from
-the request whether the user needs the Mac app, connection to a prepared snail,
-or first-time Pi setup. Do not request Pi credentials just to build the Mac app.
+Carry out authorized work instead of merely printing commands. By default, an
+installation request means the Mac app and connection to an already prepared
+snail. Do not request a Pi Linux username/password, reinstall device services,
+or include SD-card or wiring tasks in desktop installation. First-time Pi setup
+is a separate owner task, only when explicitly requested.
 
 1. Run `bash scripts/doctor.sh` (read-only). Explain what is installed, missing,
    automatic, and user-assisted. macOS 14+ is required. Apple Silicon is tested;
@@ -40,7 +43,7 @@ or first-time Pi setup. Do not request Pi credentials just to build the Mac app.
    instead of repeatedly asking for the same authorization.
 8. For a prepared snail, use Connect and its owner's device code. Do not reinstall
    Pi services as an ordinary connection step.
-9. For a new Pi, obtain its address/username from the owner, verify its SSH host
+9. Only if the owner explicitly requests first-time Pi setup, obtain its address/username from the owner, verify its SSH host
    key and use the protected setup form. Read `pi/install.sh` before installation;
    verify OS, required commands, NetworkManager, BlueZ, PipeWire/WirePlumber,
    kernel PWM and pin conflicts. Install missing packages only on the identified
@@ -51,14 +54,14 @@ or first-time Pi setup. Do not request Pi credentials just to build the Mac app.
     user observation. Never silently record a conversation or report untested
     hardware as working.
 
-Finish with: installed components, Pi prepared/pending, permissions the user
-must finish, call devices to select, checks completed and remaining limitations.
+Finish with: installed Mac components, connection completed/pending, permissions
+the user must finish, call devices to select, checks completed and limitations.
 
 | Agent work within installation scope | User/system interaction |
 | --- | --- |
-| Environment checks, clone, build, signature verification | Wiring, power, SD card and actual mechanical position |
-| Official dependency downloads and authorized installation | Apple installation/admin/privacy dialogs |
-| Test environment and mock tests | Pi identity and host-key verification |
+| Environment checks, clone, build, signature verification | Apple installation and privacy dialogs |
+| Official Mac dependency downloads and authorized installation | Mac administrator prompts |
+| Test environment and mock tests | Snail connection code from its owner |
 | Setup guidance and non-secret status checks | Protected password/code entry and audible test results |
 
 ## Hardware constraints
