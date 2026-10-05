@@ -21,3 +21,4 @@ known_hosts*
 provision.json
 devices.json
 credentials.json
+admin-pin.json

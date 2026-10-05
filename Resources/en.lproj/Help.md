@@ -1,4 +1,4 @@
-In Settings → Audio transport choose Bluetooth or Wi-Fi. For Wi-Fi, install the audio devices using the Settings button once and update Pi. In Telegram select DenDenMushi Wi-Fi Microphone and DenDenMushi Wi-Fi Speakers. Your choice is saved; switching briefly interrupts audio.
+New installations use English and Wi-Fi audio. In Settings → Audio transport you can switch to Bluetooth; saved preferences are preserved. For Wi-Fi, install the Mac audio devices once using the Settings button and complete the native installer. Guests connecting to a prepared snail do not reinstall Pi services.
 
 # DenDenMushi
 
@@ -13,9 +13,9 @@ The app displays a live preview up to 15 fps. The call receives the full 720p / 
 
 ## Audio
 
-Camera and audio share the main screen. Pair the snail with your Mac once using **Connect Bluetooth audio**. After that, **Connect** starts the camera and reconnects the snail speakers. In your call app, select **DenDenMushi** or the system default output. If audio fails, use the audio retry button; the camera keeps running.
+Camera and audio share the main screen. Connect starts the Wi-Fi audio session when its drivers are installed. In your call app, select **DenDenMushi Wi-Fi Microphone** and **DenDenMushi Wi-Fi Speakers**. The app’s speaker and microphone pickers apply your choice immediately to the Mac defaults; a call app may have its own device selection. If audio fails, use the audio retry button.
 
-**Snail speaker volume** and **Snail microphone level** control the USB audio adapter on Pi. Release the slider to apply its value. 0 dB means no attenuation; negative values are quieter. The updated service allows microphone gain up to +20 dB; start at 0 dB. Noise is also amplified, so lower the level if distortion appears. The adjacent button mutes or unmutes that channel. Values are read from Pi and are not reset on connection; the refresh button reads them again. Mac volume also affects the result.
+Speaker volume and microphone gain are available under **Settings → Superadmin audio settings**, after connecting and entering the owner’s separate superadmin code. Access expires after ten minutes or on disconnect. Release a slider to apply its value. Guest users can make calls without this code.
 
 OBS Virtual Camera carries video only. After updating Pi, enable **Snail microphone** to try two-way Bluetooth audio. In Telegram / Meet, choose **DenDenMushi** or the system default microphone. The channel may open only when Telegram starts recording. This mode uses mono, telephone-quality audio. Turning it off restores stereo and the previous microphone unless you selected another input meanwhile. The app does not save the call to a file. Verify your voice with a short test recording.
 

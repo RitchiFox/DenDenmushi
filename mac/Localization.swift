@@ -7,7 +7,7 @@ enum AppLanguage: String, CaseIterable, Identifiable {
     var name: String {
         switch self { case .uk: return "Українська"; case .cs: return "Čeština"; case .en: return "English" }
     }
-    static var current: AppLanguage { AppLanguage(rawValue: UserDefaults.standard.string(forKey: "appLanguage") ?? "uk") ?? .uk }
+    static var current: AppLanguage { AppLanguage(rawValue: UserDefaults.standard.string(forKey: "appLanguage") ?? "en") ?? .en }
 }
 
 @MainActor

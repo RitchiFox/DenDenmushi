@@ -172,32 +172,23 @@ struct MainView: View {
             }
             VStack(alignment: .leading, spacing: 6) {
                 Text(L("Динаміки")).font(.callout.bold())
-                Picker(L("Динаміки"), selection: $model.output) {
+                Picker(L("Динаміки"), selection: Binding(get: { model.output }, set: { model.selectOutput($0) })) {
                     Text(L("Залишити поточні")).tag(UInt32(0))
                     ForEach(model.devices.filter { $0.output && $0.uid != WiFiAudioDevices.micUID }) { Text($0.name).tag($0.id) }
-                }.labelsHidden()
+                }.labelsHidden().disabled(model.audioBusy || model.busy || model.preparing)
             }
             VStack(alignment: .leading, spacing: 6) {
                 Text(L("Мікрофон")).font(.callout.bold())
-                Picker(L("Мікрофон"), selection: $model.input) {
+                Picker(L("Мікрофон"), selection: Binding(get: { model.input }, set: { model.selectInput($0) })) {
                     Text(L("Залишити поточний")).tag(UInt32(0))
                     ForEach(model.devices.filter { $0.input && $0.uid != WiFiAudioDevices.speakerUID }) { device in
                         if model.unavailableMicrophone(device) {
                             Text(device.name + " · " + L("Ще недоступний")).tag(device.id).disabled(true)
                         } else { Text(device.name).tag(device.id) }
                     }
-                }.labelsHidden()
+                }.labelsHidden().disabled(model.audioBusy || model.busy || model.preparing)
             }
-            Button(L("Застосувати звук")) { model.applyAudio() }.buttonStyle(.bordered).disabled(model.audioBusy || model.busy || model.preparing)
             Divider()
-            volumeControl(title: "Гучність динаміків равлика", kind: "output", value: $model.speakerDB, muted: $model.speakerMuted, available: model.speakerLevelAvailable)
-            volumeControl(title: "Рівень мікрофона равлика", kind: "input", value: $model.microphoneDB, muted: $model.microphoneMuted, available: model.microphoneLevelAvailable)
-            if model.microphoneGainSupported {
-                Text(L("Понад 0 дБ підсилює голос і фоновий шум.")).font(.caption).foregroundStyle(.secondary)
-            }
-            if model.levelsBusy { ProgressView().controlSize(.small) }
-            Text(L(model.levelsStatus)).font(.caption).foregroundStyle(.secondary)
-            if !model.quietStatus.isEmpty { Text(L(model.quietStatus)).font(.caption).foregroundStyle(.secondary) }
             if model.callMicrophoneArmed && model.audioTransport == "bluetooth" {
                 Text(L("У Telegram вибери мікрофон DenDenMushi або системний за замовчуванням.")).font(.caption).foregroundStyle(.secondary)
             }
@@ -206,26 +197,6 @@ struct MainView: View {
             Text(L("Перше аудіоспарювання — один раз. Далі кнопка «Підключити» запускає камеру й динаміки.")).font(.caption).foregroundStyle(.secondary)
             }
             Text(L("У дзвінку вибери ці аудіопристрої або «За замовчуванням».")).font(.caption).foregroundStyle(.secondary)
-        }
-    }
-    private func volumeControl(title: String, kind: String, value: Binding<Double>, muted: Binding<Bool>, available: Bool) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
-            HStack {
-                Text(L(title)).font(.callout.bold())
-                Spacer()
-                Text(available ? String(format: value.wrappedValue > 0 ? "+%.1f dB" : "%.1f dB", value.wrappedValue) : "—").font(.caption.monospacedDigit())
-            }
-            HStack {
-                Slider(value: Binding(get: { value.wrappedValue }, set: { model.stageLevel(kind, db: $0) }), in: model.levelRange(kind), step: 1, onEditingChanged: { editing in
-                    model.levelEditing(kind, editing)
-                }).accessibilityLabel(L(title))
-                Button {
-                    model.stageLevel(kind, toggleMute: true)
-                } label: {
-                    Image(systemName: kind == "input" ? (muted.wrappedValue ? "mic.slash.fill" : "mic.fill") : (muted.wrappedValue ? "speaker.slash.fill" : "speaker.wave.2.fill"))
-                }.help(L(muted.wrappedValue ? "Увімкнути звук" : "Вимкнути звук"))
-                 .accessibilityLabel(L(title) + ": " + L(muted.wrappedValue ? "Увімкнути звук" : "Вимкнути звук"))
-            }.disabled(!available || model.audioBusy || !model.connected)
         }
     }
     private var setup: some View {

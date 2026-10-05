@@ -48,6 +48,25 @@ Bluetooth full-duplex audio is experimental and has telephone-quality limits.
 Wi-Fi audio can also drop out under network stalls. Preview refresh and call
 video rates differ; OBS supplies the video device used by the call.
 
+## Owner-only audio settings
+
+Guest Macs do not need the audio superadmin code. Normal microphone/speaker
+selection and connection remain available without it. Speaker gain, microphone
+gain and their hardware mute controls require a ten-minute admin session.
+Disconnecting or locking Settings revokes that Mac's session.
+
+The owner configures a separate code on the Pi using the protected prompt:
+
+```sh
+sudo python3 /opt/denden-demo/audio_admin.py configure --owner YOUR_PI_SERVICE_USER
+```
+
+Replace the account placeholder with the existing service account. The tool
+asks for the new code twice without displaying it. Do not put a real code in
+command arguments, Git, screenshots or issue reports. The installer has no
+default code and preserves the private device file during updates. Without a
+configured code the gain controls remain locked; other audio features still work.
+
 ## Distribution
 
 Build locally for your Mac architecture. Neither the app nor the generated

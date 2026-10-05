@@ -12,6 +12,13 @@ snail. Do not request a Pi Linux username/password, reinstall device services,
 or include SD-card or wiring tasks in desktop installation. First-time Pi setup
 is a separate owner task, only when explicitly requested.
 
+The deliverable is a normal installed **DenDenMushi.app**, launched by clicking
+its icon in Applications/Finder/Spotlight. Do not stop at a build folder, a
+terminal-running process, or instructions telling the user to run shell
+commands. Perform build and file-copy operations yourself through your tools.
+Use the native macOS installer for the audio package and leave administrator
+and privacy prompts to the user. Explain only the GUI steps the user must take.
+
 1. Run `bash scripts/doctor.sh` (read-only). Explain what is installed, missing,
    automatic, and user-assisted. macOS 14+ is required. Apple Silicon is tested;
    Intel is not. Linux/Windows cannot run this desktop app.
@@ -29,8 +36,12 @@ is a separate owner task, only when explicitly requested.
    `python3 scripts/build-wifi-drivers.py`, `bash scripts/build-app.sh`.
    These commands do not install drivers or touch Pi. Do not replace an existing
    user's custom waiting sound or settings during an update.
-5. Verify `codesign --verify --strict build/DenDenMushi.app`. Install in
-   Applications when requested, preserving an existing copy before replacement.
+5. Verify `codesign --verify --strict build/DenDenMushi.app`. An ordinary install
+   request includes placing it in `/Applications/DenDenMushi.app`. If that folder
+   is not writable, use `~/Applications/DenDenMushi.app` and tell the user where
+   it was installed. Preserve an existing app before replacement. Launch and
+   verify the installed copy, not the copy in `build/`; everyday launch must not
+   require Terminal or an open repository. Do not add a Dock item unless asked.
    Do not replace/restart a running call without prior authorization and do not
    launch two app copies concurrently.
 6. The user completes macOS privacy/admin prompts. Explain permissions when
@@ -38,7 +49,10 @@ is a separate owner task, only when explicitly requested.
    fields for passwords, not chat/public issues or command-line arguments.
    Distinguish the Mac administrator password, Pi Linux account password,
    snail pairing code and Wi-Fi password. Public cloning needs no GitHub token.
-7. Install Wi-Fi audio devices through app Settings. This restarts CoreAudio
+7. Complete the separate Wi-Fi audio installation through app Settings and its
+   native macOS installer; do not leave it as an unexplained optional command.
+   Verify both named devices appear, without playing or recording audio.
+   This restarts CoreAudio
    and interrupts all Mac sound: do it outside a call. Honor existing permission
    instead of repeatedly asking for the same authorization.
 8. For a prepared snail, use Connect and its owner's device code. Do not reinstall

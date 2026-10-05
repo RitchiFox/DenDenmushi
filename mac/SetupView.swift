@@ -38,6 +38,8 @@ struct SetupView: View {
                     Text(L(controller.audioStatus)).font(.caption).foregroundStyle(controller.audioNeedsAttention ? .orange : .secondary)
                 }
                 Divider()
+                AudioAdminSettings(controller: controller)
+                Divider()
                 Button(L("Мережі Wi-Fi равлика")) { showNetworks = true }
                     .sheet(isPresented: $showNetworks) { WiFiNetworksView(model: model, wifi: model.macWiFi) }
                 Button(L("Історія пристроїв")) { showDeviceHistory = true }

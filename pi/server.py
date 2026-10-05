@@ -95,7 +95,7 @@ class Camera:
         self.stop()
 
 
-def handler_for(camera, audio=None, servos=None, wifi=None, waiting=None, history=None, pairing=None):
+def handler_for(camera, audio=None, servos=None, wifi=None, waiting=None, history=None, pairing=None, admin=None):
     class Handler(BaseHTTPRequestHandler):
         def reply(self, code, payload):
             data = json.dumps(payload).encode()
@@ -158,6 +158,8 @@ def handler_for(camera, audio=None, servos=None, wifi=None, waiting=None, histor
             if self.path != "/status":
                 return self.reply(404, {"error": "not found"})
             features = ["audio-connect-v1", "audio-levels-v1", "audio-split-io-v1", "audio-call-v1", "audio-mic-gain-v1"] if audio else []
+            if audio is not None and admin is not None:
+                features.append("audio-admin-v1")
             if audio and getattr(audio, "quiet", None):
                 features.append("audio-idle-mute-v1")
             if pairing is not None:
@@ -178,6 +180,27 @@ def handler_for(camera, audio=None, servos=None, wifi=None, waiting=None, histor
         def do_POST(self):
             if not self.allowed():
                 return self.reply(403, {"error": "native client required"})
+            if self.path == "/audio/admin/unlock" and admin is not None:
+                try:
+                    self.connection.settimeout(3)
+                    size = int(self.headers.get("Content-Length", "0"))
+                    if not 1 <= size <= 256 or self.headers.get("Transfer-Encoding"):
+                        raise ValueError("invalid_request")
+                    body = json.loads(self.rfile.read(size))
+                    if not isinstance(body, dict) or set(body) != {"pin"}:
+                        raise ValueError("invalid_request")
+                    code, result = admin.unlock(body["pin"])
+                    return self.reply(code, result)
+                except (ValueError, OSError):
+                    return self.reply(400, {"ok": False, "error": "invalid_request"})
+            if self.path == "/audio/admin/lock" and admin is not None:
+                if self.headers.get("Transfer-Encoding") or self.headers.get("Content-Length") not in (None, "0"):
+                    return self.reply(400, {"ok": False, "error": "invalid_request"})
+                admin.revoke(self.headers.get("X-DenDen-Audio-Admin"))
+                return self.reply(200, {"ok": True})
+            if (self.path == "/audio/level" and admin is not None
+                    and not admin.authorized(self.headers.get("X-DenDen-Audio-Admin"))):
+                return self.reply(401, {"ok": False, "error": "admin_required"})
             if self.path == "/bluetooth/pairing/open" and pairing is not None:
                 if self.headers.get("Transfer-Encoding") or self.headers.get("Content-Length") not in (None, "0", "2"):
                     return self.reply(400, {"ok": False, "error": "invalid_request"})
@@ -284,7 +307,9 @@ def main():
     from servos import ServoClient
     from wifi_audio import WiFiAudio
     from pairing import PairingClient
+    from audio_admin import AudioAdmin
     pairing = PairingClient()
+    admin = AudioAdmin()
     camera = Camera()
     audio = Audio(quiet=QuietOutput("/var/lib/denden-audio/quiet.json"))
     worker = threading.Thread(target=camera.run, daemon=True)
@@ -301,7 +326,7 @@ def main():
     history = DeviceHistory()
     history_worker = threading.Thread(target=history.run, daemon=True)
     history_worker.start()
-    server = ThreadingHTTPServer(("127.0.0.1", 8789), handler_for(camera, audio, servos, wifi, waiting, history, pairing))
+    server = ThreadingHTTPServer(("127.0.0.1", 8789), handler_for(camera, audio, servos, wifi, waiting, history, pairing, admin))
     server.daemon_threads = True
     def shutdown(*_):
         history.closed.set()
